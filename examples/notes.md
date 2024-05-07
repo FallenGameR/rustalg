@@ -7,3 +7,9 @@ To run the examples use:
 ```ps1
 cargo run --release --example BASE_FILE_NAME ARGUMENTS
 ```
+
+## What's new
+
+- [Simpler lint rules](https://blog.rust-lang.org/2023/11/16/Rust-1.74.0.html)
+- [Add Send bound to async result](https://blog.rust-lang.org/2023/12/21/async-fn-rpit-in-traits.html)
+- [Async recursion](https://blog.rust-lang.org/2024/03/21/Rust-1.77.0.html)
