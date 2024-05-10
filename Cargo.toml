@@ -4,4 +4,7 @@ version = "0.0.1"
 edition = "2021"
 
 [dependencies]
+ansi_term = "0.12.1"
+anyhow = "1.0.83"
+clap = "4.5.4"
 rand = "0.8.5"

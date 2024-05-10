@@ -1,5 +1,9 @@
 # Notes
 
+## Add dependency
+
+`cargo add rand`
+
 ## Run examples
 
 These examples are not directly related to the algorithms. But they are related to the book. It could have been an excersize or some side note to check.
