@@ -12,6 +12,7 @@
 use std::{fs::File, io::{BufRead, BufReader}};
 use clap::{arg, Command};
 use anyhow::{anyhow, Ok, Result};
+use rayon::prelude::*;
 
 #[derive(Debug)]
 pub struct Config {
@@ -19,7 +20,10 @@ pub struct Config {
 }
 
 /// cargo run --release --example ch1_p173-three-sum examples\data\ch1_p173-three-sum\1Kints.txt
-/// hyperfine.exe "cargo run --release --example ch1_p173-three-sum examples\data\ch1_p173-three-sum\1Kints.txt"
+/// cargo build --release --example ch1_p173-three-sum
+/// hyperfine.exe --warmup 1 --export-markdown examples\data\ch1_p173-three-sum\result_single_thread.md --parameter-list SIZE 1,2,4,8,16,32 ".\target\release\examples\ch1_p173-three-sum.exe examples\data\ch1_p173-three-sum\{SIZE}Kints.txt"
+/// https://github.com/rayon-rs/rayon/blob/main/README.md
+/// https://github.com/rayon-rs/rayon/blob/main/FAQ.md
 pub fn run(config: Config) -> Result<()> {
 
     // Parse numbers from file
