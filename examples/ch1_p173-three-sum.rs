@@ -1,6 +1,6 @@
 // https://algs4.cs.princeton.edu/14analysis/
 //
-// cd V:\src\rust\rustalg\examples\data\ch1_4-three-sum\
+// cd V:\src\rust\rustalg\examples\data\ch1_p173-three-sum\
 // http https://algs4.cs.princeton.edu/14analysis/1Kints.txt > 1Kints.txt
 // http https://algs4.cs.princeton.edu/14analysis/2Kints.txt > 2Kints.txt
 // http https://algs4.cs.princeton.edu/14analysis/4Kints.txt > 4Kints.txt
@@ -18,25 +18,34 @@ pub struct Config {
     in_file: String,
 }
 
-/// cargo run --release --example ch1_4-three-sum examples\data\ch1_4-three-sum\1Kints.txt
-/// hyperfine.exe "cargo run --release --example ch1_4-three-sum examples\data\ch1_4-three-sum\1Kints.txt"
+/// cargo run --release --example ch1_p173-three-sum examples\data\ch1_p173-three-sum\1Kints.txt
+/// hyperfine.exe "cargo run --release --example ch1_p173-three-sum examples\data\ch1_p173-three-sum\1Kints.txt"
 pub fn run(config: Config) -> Result<()> {
-    dbg!(&config);
 
-    let reader = open(&config.in_file)?;
+    // Parse numbers from file
     let mut numbers = Vec::new();
-
-    // TODO: Write terser code, figure out error propogation
+    let reader = open(&config.in_file)?;
     for line in reader.lines() {
         let line = line?;
         let number = line.trim().parse::<i32>()?;
         numbers.push(number);
     }
 
-    dbg!(&numbers);
+    // Find three sum combinations that are zero
+    let mut result = 0;
+    for a in 0..numbers.len() {
+        for b in a+1..numbers.len() {
+            for c in b+1..numbers.len() {
+                if numbers[a] + numbers[b] + numbers[c] == 0 {
+                    result += 1;
+                }
+            }
+        }
 
-    // TODO: the actual tree sum logic here
-    // TODO: measure performance on different input sizes
+    }
+
+    // Print the output
+    println!("{}", result);
 
     Ok(())
 }
