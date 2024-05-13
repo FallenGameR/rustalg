@@ -24,6 +24,28 @@ pub struct Config {
 /// hyperfine.exe --warmup 1 --export-markdown examples\data\ch1_p173-three-sum\result_single_thread.md --parameter-list SIZE 1,2,4,8,16,32 ".\target\release\examples\ch1_p173-three-sum.exe examples\data\ch1_p173-three-sum\{SIZE}Kints.txt"
 /// https://github.com/rayon-rs/rayon/blob/main/README.md
 /// https://github.com/rayon-rs/rayon/blob/main/FAQ.md
+
+/*
+
+  .\target\release\examples\ch1_p173-three-sum.exe examples\data\ch1_p173-three-sum\1Kints.txt ran
+    5.02 ± 0.13 times faster than .\target\release\examples\ch1_p173-three-sum.exe examples\data\ch1_p173-three-sum\2Kints.txt
+   35.79 ± 0.71 times faster than .\target\release\examples\ch1_p173-three-sum.exe examples\data\ch1_p173-three-sum\4Kints.txt
+  279.94 ± 5.74 times faster than .\target\release\examples\ch1_p173-three-sum.exe examples\data\ch1_p173-three-sum\8Kints.txt
+ 2234.14 ± 48.41 times faster than .\target\release\examples\ch1_p173-three-sum.exe examples\data\ch1_p173-three-sum\16Kints.txt
+18151.01 ± 549.46 times faster than .\target\release\examples\ch1_p173-three-sum.exe examples\data\ch1_p173-three-sum\32Kints.txt
+
+1k -  1
+x2 - x5
+x2 - x7
+x2 - x8
+x2 - x8
+x2 - x8
+
+8 = 2 * 2 * 2
+
+this is O(n^3) algorithm
+
+*/
 pub fn run(config: Config) -> Result<()> {
 
     // Parse numbers from file
