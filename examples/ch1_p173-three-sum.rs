@@ -45,6 +45,13 @@ x2 - x8
 
 this is O(n^3) algorithm
 
+cargo build --release --example ch1_p173-three-sum
+hyperfine.exe ".\target\release\examples\ch1_p173-three-sum.exe .\examples\data\rand\8K_int.txt"
+
+for_impl - 7s
+ranges_impl - 38s
+tuples_impl - 7s
+
 */
 pub fn run(config: Config) -> Result<()> {
 
@@ -58,7 +65,8 @@ pub fn run(config: Config) -> Result<()> {
     }
 
     // Find three sum combinations that are zero
-    let result = ranges_impl(numbers);
+    // for_impl, ranges_impl, tuples_impl
+    let result = for_impl(numbers);
 
     // Print the output
     println!("{}", result);
@@ -66,27 +74,22 @@ pub fn run(config: Config) -> Result<()> {
     Ok(())
 }
 
-fn tuples_impl(numbers: Vec<i32>) -> i32 {
-    let mut result = 0;
+fn tuples_impl(numbers: Vec<i32>) -> usize {
     let n = numbers.len();
 
-
-    let test =
-        (0..n).map(|a| (0..n).map(|b| b).collect::<Vec<_>>() ).collect::<Vec<_>>();
-
     let tuples =
-        (0..n).map(move |a|
-            (a+1..n).map(move |b|
+        (0..n).flat_map(move |a|
+            (a+1..n).flat_map(move |b|
                 (b+1..n).map(move |c|
-                    c
+                    (a,b,c)
                 )
             )
-        ).collect::<Vec<_>>();
+        );
 
-    result
+    tuples.filter(|(a,b,c)| numbers[*a] + numbers[*b] + numbers[*c] == 0 ).count()
 }
 
-fn ranges_impl(numbers: Vec<i32>) -> i32 {
+fn ranges_impl(numbers: Vec<i32>) -> usize {
     let mut result = 0;
 
     (0..numbers.len()).into_iter().for_each(|a| {
@@ -102,7 +105,7 @@ fn ranges_impl(numbers: Vec<i32>) -> i32 {
     result
 }
 
-fn for_impl(numbers: Vec<i32>) -> i32 {
+fn for_impl(numbers: Vec<i32>) -> usize {
     let mut result = 0;
 
     for a in 0..numbers.len() {
