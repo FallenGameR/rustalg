@@ -19,7 +19,7 @@ pub struct Config {
     in_file: String,
 }
 
-/// cargo run --release --example ch1_p173-three-sum examples\data\ch1_p173-three-sum\1Kints.txt
+/// cargo run --release --example ch1_p173-three-sum examples\data\rand\1K_int.txt
 /// cargo build --release --example ch1_p173-three-sum
 /// hyperfine.exe --warmup 1 --export-markdown examples\data\ch1_p173-three-sum\result_single_thread.md --parameter-list SIZE 1,2,4,8,16,32 ".\target\release\examples\ch1_p173-three-sum.exe examples\data\ch1_p173-three-sum\{SIZE}Kints.txt"
 /// https://github.com/rayon-rs/rayon/blob/main/README.md
@@ -58,12 +58,32 @@ pub fn run(config: Config) -> Result<()> {
     }
 
     // Find three sum combinations that are zero
-    let result = for_impl(numbers);
+    let result = ranges_impl(numbers);
 
     // Print the output
     println!("{}", result);
 
     Ok(())
+}
+
+fn tuples_impl(numbers: Vec<i32>) -> i32 {
+    let mut result = 0;
+    let n = numbers.len();
+
+
+    let test =
+        (0..n).map(|a| (0..n).map(|b| b).collect::<Vec<_>>() ).collect::<Vec<_>>();
+
+    let tuples =
+        (0..n).map(move |a|
+            (a+1..n).map(move |b|
+                (b+1..n).map(move |c|
+                    c
+                )
+            )
+        ).collect::<Vec<_>>();
+
+    result
 }
 
 fn ranges_impl(numbers: Vec<i32>) -> i32 {
