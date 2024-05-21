@@ -58,7 +58,33 @@ pub fn run(config: Config) -> Result<()> {
     }
 
     // Find three sum combinations that are zero
+    let result = for_impl(numbers);
+
+    // Print the output
+    println!("{}", result);
+
+    Ok(())
+}
+
+fn ranges_impl(numbers: Vec<i32>) -> i32 {
     let mut result = 0;
+
+    (0..numbers.len()).into_iter().for_each(|a| {
+        (a+1..numbers.len()).into_iter().for_each(|b| {
+            (b+1..numbers.len()).into_iter().for_each(|c| {
+                if numbers[a] + numbers[b] + numbers[c] == 0 {
+                    result += 1;
+                }
+            });
+        });
+    });
+
+    result
+}
+
+fn for_impl(numbers: Vec<i32>) -> i32 {
+    let mut result = 0;
+
     for a in 0..numbers.len() {
         for b in a+1..numbers.len() {
             for c in b+1..numbers.len() {
@@ -67,13 +93,9 @@ pub fn run(config: Config) -> Result<()> {
                 }
             }
         }
-
     }
 
-    // Print the output
-    println!("{}", result);
-
-    Ok(())
+    result
 }
 
 fn main() {
