@@ -64,7 +64,11 @@ atomic_par_trailing_impl - >1min - very inefficient to make small operations par
 https://smallcultfollowing.com/babysteps/blog/2015/12/18/rayon-data-parallelism-in-rust/
 https://github.com/rayon-rs/rayon/blob/main/README.md
 https://github.com/rayon-rs/rayon/blob/main/FAQ.md
+
 https://docs.rs/rayon/latest/rayon/
+https://docs.rs/rayon/latest/rayon/iter/index.html
+https://docs.rs/rayon/latest/rayon/fn.join.html
+https://docs.rs/rayon/latest/rayon/fn.scope.html
 */
 
 pub fn run(config: Config) -> Result<()> {
