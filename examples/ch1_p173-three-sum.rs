@@ -45,6 +45,12 @@ x2 - x8
 
 this is O(n^3) algorithm
 
+16k -> 144s
+T = a * n^3
+a = T / n^3 = 144 / 16^3 = 144 / 4096 = 0.035
+
+32k -> 0.035 * 32^3 = 0.035 * 32768 = 1146s prediction, 1169s actual, quite accurate
+
 cargo run --release --example ch1_p173-three-sum examples\data\rand\1K_int.txt
 cargo build --release --example ch1_p173-three-sum
 hyperfine.exe ".\target\release\examples\ch1_p173-three-sum.exe .\examples\data\rand\8K_int.txt"
