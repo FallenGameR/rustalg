@@ -11,16 +11,18 @@ fn main() {
     dbg!(index);
 }
 
+///
 /// Performs a binary search on a sorted array to find the index of a given key.
 ///
-/// # Arguments
+/// ### Args
 ///
-/// * `a` - A reference to a sorted array of integers.
-/// * `kesearchedy` - The integer value to search for in the array.
+/// - `array` - A reference to a sorted array of integers.
+/// - `searched` - The integer value to search for in the array.
 ///
-/// # Returns
+/// ### Returns
 ///
 /// The index of the `key` in the array if found, otherwise -1.
+///
 fn binary_search(array: &[i32; 5], searched: i32) -> i32 {
     let mut lo = 0;
     let mut hi = array.len() - 1;
