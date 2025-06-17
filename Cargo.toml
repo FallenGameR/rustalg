@@ -6,6 +6,6 @@ edition = "2021"
 [dependencies]
 ansi_term = "0.12.1"
 anyhow = "1.0.98"
-clap = "4.5.39"
+clap = "4.5.40"
 rand = "0.9.1"
 rayon = "1.10.0"
