@@ -1,7 +1,7 @@
 
 use std::{fs::File, io::{BufRead, BufReader}, sync::{atomic::{AtomicU32, Ordering}, Arc}};
 use clap::{arg, Command};
-use anyhow::{anyhow, Ok, Result};
+use anyhow::{anyhow, Result};
 use rayon::prelude::*;
 
 #[derive(Debug)]
@@ -9,6 +9,7 @@ pub struct Config {
     in_file: String,
 }
 
+// cargo run --release --example 003_p173_three-sum .\data\rand\1K_int.txt
 fn main() {
     if let Err(error) = get_args().and_then(run) {
         eprintln!("{error}");
@@ -54,7 +55,7 @@ pub fn run(config: Config) -> Result<()> {
     // tuples_vec_par_filter_impl
     // partitions_impl, partitions_par_impl
     // ranges_arc_impl, atomic_par_impl
-    let result = atomic_par_trailing_impl(numbers);
+    let result = atomic_par_trailing_with_sort_impl(numbers);
 
     // Print the output
     println!("{}", result);
@@ -62,14 +63,38 @@ pub fn run(config: Config) -> Result<()> {
     Ok(())
 }
 
+// 0.29s on 1K of numbers
+fn atomic_par_trailing_with_sort_impl(mut numbers: Vec<i32>) -> usize {
+    // Sorting allows fast binary search
+    numbers.sort();
+
+    let n = numbers.len();
+    let result = Arc::new(AtomicU32::new(0));
+
+    (0..n).for_each(|i|
+        (i+1..n).into_par_iter().for_each(|j| {
+            let target_sum = -numbers[i] - numbers[j];
+            // If the index is found, it means we have a valid triplet
+            if let Ok(k) = numbers.binary_search(&target_sum) {
+                if k > j { // Ensure k is greater than j to avoid duplicates
+                    result.fetch_add(1, Ordering::Relaxed);
+                }
+            }
+        })
+    );
+
+    result.load(Ordering::Relaxed) as usize
+}
+
+// 70s on 1K of numbers
 fn atomic_par_trailing_impl(numbers: Vec<i32>) -> usize {
     let n = numbers.len();
     let result = Arc::new(AtomicU32::new(0));
 
-    (0..n).for_each(|a|
-        (a+1..n).for_each(|b|
-            (b+1..n).into_par_iter().for_each(|c|
-                if numbers[a] + numbers[b] + numbers[c] == 0 {
+    (0..n).for_each(|i|
+        (i+1..n).for_each(|j|
+            (j+1..n).into_par_iter().for_each(|k|
+                if numbers[i] + numbers[j] + numbers[k] == 0 {
                     result.fetch_add(1, Ordering::Relaxed);
                 }
             )
