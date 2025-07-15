@@ -63,7 +63,7 @@ pub fn run(config: Config) -> Result<()> {
     Ok(())
 }
 
-// 0.29s on 1K of numbers
+// 0.1s on 32K of numbers
 fn atomic_par_trailing_with_sort_impl(mut numbers: Vec<i32>) -> usize {
     // Sorting allows fast binary search
     numbers.sort();
@@ -71,9 +71,9 @@ fn atomic_par_trailing_with_sort_impl(mut numbers: Vec<i32>) -> usize {
     let n = numbers.len();
     let result = Arc::new(AtomicU32::new(0));
 
-    (0..n).for_each(|i|
-        (i+1..n).into_par_iter().for_each(|j| {
-            let target_sum = -numbers[i] - numbers[j];
+    (0..n).into_par_iter().for_each(|i|
+        (i+1..n).for_each(|j| {
+            let target_sum = -(numbers[i] + numbers[j]);
             // If the index is found, it means we have a valid triplet
             if let Ok(k) = numbers.binary_search(&target_sum) {
                 if k > j { // Ensure k is greater than j to avoid duplicates
