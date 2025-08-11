@@ -10,6 +10,16 @@ pub struct Config {
     in_file: String,
 }
 
+#[derive(Debug)]
+pub struct Node {
+    id: usize,
+}
+
+#[derive(Debug)]
+pub struct Component {
+    id: usize,
+}
+
 // 001_p220_union-find
 // cargo run --release --bin union-find # .\data\rand\1K_int.txt
 fn main() {
