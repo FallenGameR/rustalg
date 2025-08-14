@@ -42,7 +42,7 @@ pub fn get_args() -> Result<Config> {
         .author("FallenGameR")
         .about("Outputs connection of not yet connected sites, at the end prints total number of connected components")
         .args([
-            arg!([INPUT_FILE] "Input file that starts with number of entries and then proceeds with pairs of connected sites, stdin is -").default_value("-"),
+            arg!([INPUT_FILE] "Input file with pairs of connected sites specified by ids, stdin is -").default_value("-"),
         ])
         .get_matches();
 
@@ -59,16 +59,9 @@ fn open(path: &str) -> Result<Box<dyn BufRead>> {
 }
 
 pub fn run(config: Config) -> Result<Vec<(Node, Node)>> {
-    let mut reader = open(&config.in_file)?;
-
-    // Parse number of connections
-    let mut first_line = String::new();
-    reader.read_line(&mut first_line)?;
-    let n: usize = first_line.trim().parse()?;
     let mut connections: Vec<(Node, Node)> = Vec::new();
-    println!("Number of connections: {n}");
+    let reader = open(&config.in_file)?;
 
-    // Parse the connections
     for (i, line) in reader.lines().enumerate() {
         let line = line?;
         let mut pair = line.split_whitespace();
@@ -92,6 +85,11 @@ pub fn run(config: Config) -> Result<Vec<(Node, Node)>> {
         }
 
         connections.push((p, q));
+    }
+
+    println!("Total connections: {}", connections.len());
+    for (p, q) in &connections {
+        println!("  {} <-> {}", p.id, q.id);
     }
 
     Ok(connections)
