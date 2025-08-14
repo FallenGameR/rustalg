@@ -1,10 +1,10 @@
 // page 220
 
-use std::{fs::File, io::{BufRead, BufReader}, sync::{atomic::{AtomicU32, Ordering}, Arc}};
-use clap::{arg, Command};
 use anyhow::{anyhow, Result};
+use clap::{arg, Command};
+use indoc::indoc;
 use rayon::prelude::*;
-//use crate::shared_function;
+use std::{fs::File, io::{BufRead, BufReader}, sync::{atomic::{AtomicU32, Ordering}, Arc}};
 
 #[derive(Debug)]
 pub struct Config {
@@ -116,7 +116,11 @@ mod tests {
 
     #[test]
     fn parse_connections_success_case() {
-        let text = "0 1\n1 2\n2 3\n";
+        let text = indoc! {"
+            0 1
+            1 2
+            2 3
+        "};
         let reader = Cursor::new(text);
         let connections = parse_connections(reader).unwrap();
 
