@@ -60,8 +60,19 @@ fn open(path: &str) -> Result<Box<dyn BufRead>> {
 }
 
 pub fn run(config: Config) -> Result<Vec<(Node, Node)>> {
-    let mut connections: Vec<(Node, Node)> = Vec::new();
     let reader = open(&config.in_file)?;
+    let connections: Vec<(Node, Node)> = parse_connections(reader)?;
+
+    println!("Total connections: {}", connections.len());
+    for (p, q) in &connections {
+        println!("  {} <-> {}", p.id, q.id);
+    }
+
+    Ok(connections)
+}
+
+pub fn parse_connections<R: BufRead>(reader: R) -> Result<Vec<(Node, Node)>> {
+    let mut connections: Vec<(Node, Node)> = Vec::new();
 
     for (i, line) in reader.lines().enumerate() {
         let line = line?;
@@ -88,10 +99,27 @@ pub fn run(config: Config) -> Result<Vec<(Node, Node)>> {
         connections.push((p, q));
     }
 
-    println!("Total connections: {}", connections.len());
-    for (p, q) in &connections {
-        println!("  {} <-> {}", p.id, q.id);
-    }
-
     Ok(connections)
+}
+
+// Tests
+// cargo test --bin union-find
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::io::Cursor;
+
+    #[test]
+    fn parse_connections_success_case() {
+        let text = "0 1\n1 2\n2 3\n";
+        let reader = Cursor::new(text);
+        let connections = parse_connections(reader).unwrap();
+        assert_eq!(connections.len(), 3);
+        assert_eq!(connections[0].0.id, 0);
+        assert_eq!(connections[0].1.id, 1);
+        assert_eq!(connections[1].0.id, 1);
+        assert_eq!(connections[1].1.id, 2);
+        assert_eq!(connections[2].0.id, 2);
+        assert_eq!(connections[2].1.id, 3);
+    }
 }
