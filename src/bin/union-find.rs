@@ -1,3 +1,4 @@
+// page 220
 
 use std::{fs::File, io::{BufRead, BufReader}, sync::{atomic::{AtomicU32, Ordering}, Arc}};
 use clap::{arg, Command};
@@ -27,8 +28,7 @@ trait UnionFind {
     fn union(&mut self, p: Node, q: Node);
 }
 
-// 001_p220_union-find
-// cargo run --release --bin union-find # .\data\rand\1K_int.txt
+// cargo run --release --bin union-find -- .\data\union-find\tinyUF.txt
 fn main() {
     if let Err(error) = get_args().and_then(run) {
         eprintln!("{error}");
@@ -59,18 +59,20 @@ fn open(path: &str) -> Result<Box<dyn BufRead>> {
 }
 
 pub fn run(config: Config) -> Result<()> {
+    let mut reader = open(&config.in_file)?;
 
-    // Parse numbers from file
-    let mut numbers = Vec::new();
-    let reader = open(&config.in_file)?;
+    // Parse number of connections
+    let mut first_line = String::new();
+    reader.read_line(&mut first_line)?;
+    let n: usize = first_line.trim().parse()?; // parse::<i32>, into, from
+    println!("Number of connections: {n}");
+
+    // Parse the connections
     for line in reader.lines() {
         let line = line?;
-        let number = line.trim().parse::<i32>()?;
-        numbers.push(number);
+        //let mut pair = line.trim().split_whitespace();
+        println!("Processing line: {line}");
     }
-
-    // Print the output
-    println!("Hello");
 
     Ok(())
 }
