@@ -11,7 +11,7 @@ pub struct Config {
     in_file: String,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct Node {
     id: usize,
 }
@@ -119,12 +119,13 @@ mod tests {
         let text = "0 1\n1 2\n2 3\n";
         let reader = Cursor::new(text);
         let connections = parse_connections(reader).unwrap();
-        assert_eq!(connections.len(), 3);
-        assert_eq!(connections[0].0.id, 0);
-        assert_eq!(connections[0].1.id, 1);
-        assert_eq!(connections[1].0.id, 1);
-        assert_eq!(connections[1].1.id, 2);
-        assert_eq!(connections[2].0.id, 2);
-        assert_eq!(connections[2].1.id, 3);
+
+        let expected = vec![
+            (Node { id: 0 }, Node { id: 1 }),
+            (Node { id: 1 }, Node { id: 2 }),
+            (Node { id: 2 }, Node { id: 3 }),
+        ];
+
+        assert_eq!(connections, expected);
     }
 }
