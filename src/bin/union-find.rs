@@ -28,6 +28,11 @@ trait UnionFind {
     fn union(&mut self, p: Node, q: Node);
 }
 
+struct RegularUnionFind {
+    connections: Vec<(Node, Node)>,
+    components: Vec<Component>,
+}
+
 // $env:RUSTFLAGS="-Awarnings"
 // cargo run --release --bin union-find -- .\data\union-find\tinyUF.txt
 fn main() {
