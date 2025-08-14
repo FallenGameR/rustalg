@@ -64,14 +64,32 @@ pub fn run(config: Config) -> Result<()> {
     // Parse number of connections
     let mut first_line = String::new();
     reader.read_line(&mut first_line)?;
-    let n: usize = first_line.trim().parse()?; // parse::<i32>, into, from
+    let n: usize = first_line.trim().parse()?;
     println!("Number of connections: {n}");
 
     // Parse the connections
-    for line in reader.lines() {
-        let line = line?;
-        //let mut pair = line.trim().split_whitespace();
-        println!("Processing line: {line}");
+    for (i, line) in reader.lines().enumerate() {
+        let pair = line?.split_whitespace();
+
+        let p = pair
+            .next()
+            .ok_or_else(|| anyhow!("line {i}: expected at least 1 index, got none"))?
+            .parse()
+            .map(|id| Node { id })
+            .map_err(|e| anyhow!("line {i}: failed to parse index: {e}"))?;
+
+        let q = pair
+            .next()
+            .ok_or_else(|| anyhow!("line {i}: expected at least 2 indices, got one"))?
+            .parse()
+            .map(|id| Node { id })
+            .map_err(|e| anyhow!("line {i}: failed to parse index: {e}"))?;
+
+        if let Some(extra) = pair.next() {
+            return Err(anyhow!("line {i}: unexpected extra token '{extra}'"));
+        }
+
+        println!("Processing line {i}: {line}");
     }
 
     Ok(())
