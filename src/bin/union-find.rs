@@ -28,6 +28,7 @@ trait UnionFind {
     fn union(&mut self, p: Node, q: Node);
 }
 
+// $env:RUSTFLAGS="-Awarnings"
 // cargo run --release --bin union-find -- .\data\union-find\tinyUF.txt
 fn main() {
     if let Err(error) = get_args().and_then(run) {
