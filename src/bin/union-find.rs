@@ -20,6 +20,13 @@ pub struct Component {
     id: usize,
 }
 
+trait UnionFind {
+    fn count(&self) -> usize;
+    fn is_connected(&self, p: Node, q: Node) -> bool;
+    fn find(&self, p: Node) -> Component;
+    fn union(&mut self, p: Node, q: Node);
+}
+
 // 001_p220_union-find
 // cargo run --release --bin union-find # .\data\rand\1K_int.txt
 fn main() {
