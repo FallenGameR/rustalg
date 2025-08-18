@@ -109,6 +109,14 @@ fn run(config: Config) -> Result<Box<dyn UnionFind>> {
         components: Vec::new(),
     };
 
+    println!("New connections:");
+    for (p, q) in &alg.connections {
+        if( !alg.is_connected(p, q) ) {
+            alg.union(p.clone(), q.clone());
+        }
+    }
+
+
     println!("Total connections: {}", alg.connections.len());
     for (p, q) in &alg.connections {
         println!("  {} <-> {}", p.id, q.id);
