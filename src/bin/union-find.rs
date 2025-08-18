@@ -1,10 +1,17 @@
 // page 220
 
-use anyhow::{anyhow, Result};
-use clap::{arg, Command};
+use anyhow::{Result, anyhow};
+use clap::{Command, arg};
 use indoc::indoc;
 use rayon::prelude::*;
-use std::{fs::File, io::{BufRead, BufReader}, sync::{atomic::{AtomicU32, Ordering}, Arc}};
+use std::{
+    fs::File,
+    io::{BufRead, BufReader},
+    sync::{
+        Arc,
+        atomic::{AtomicU32, Ordering},
+    },
+};
 
 #[derive(Debug)]
 pub struct Config {
@@ -23,7 +30,6 @@ pub struct Component {
 
 /// Union find algorithm that can say if two specific nodes are transitive connected.
 trait UnionFind {
-
     /// Returns the number of connected components.
     fn count(&self) -> usize;
 
@@ -52,11 +58,12 @@ impl UnionFind for RegularUnionFind {
     }
 
     fn find(&self, p: Node) -> Component {
-        todo!()
+        // todo!()
+        Component { id: 0 }
     }
 
     fn union(&mut self, p: Node, q: Node) {
-        todo!()
+        // todo!()
     }
 }
 
@@ -80,30 +87,37 @@ pub fn get_args() -> Result<Config> {
         .get_matches();
 
     Ok(Config {
-        in_file: matches.remove_one("INPUT_FILE").expect("Input file not provided"),
+        in_file: matches
+            .remove_one("INPUT_FILE")
+            .expect("Input file not provided"),
     })
 }
 
 fn open(path: &str) -> Result<Box<dyn BufRead>> {
     match path {
         "-" => Ok(Box::new(BufReader::new(std::io::stdin()))),
-        _ => Ok(Box::new(BufReader::new(File::open(path).map_err(|e| anyhow!("{path}: {e}"))?))),
+        _ => Ok(Box::new(BufReader::new(
+            File::open(path).map_err(|e| anyhow!("{path}: {e}"))?,
+        ))),
     }
 }
 
-pub fn run(config: Config) -> Result<Vec<(Node, Node)>> {
+fn run(config: Config) -> Result<Box<dyn UnionFind>> {
     let reader = open(&config.in_file)?;
-    let connections: Vec<(Node, Node)> = parse_connections(reader)?;
+    let alg = RegularUnionFind {
+        connections: parse_connections(reader)?,
+        components: Vec::new(),
+    };
 
-    println!("Total connections: {}", connections.len());
-    for (p, q) in &connections {
+    println!("Total connections: {}", alg.connections.len());
+    for (p, q) in &alg.connections {
         println!("  {} <-> {}", p.id, q.id);
     }
 
-    Ok(connections)
+    Ok(Box::new(alg))
 }
 
-pub fn parse_connections<R: BufRead>(reader: R) -> Result<Vec<(Node, Node)>> {
+fn parse_connections<R: BufRead>(reader: R) -> Result<Vec<(Node, Node)>> {
     let mut connections: Vec<(Node, Node)> = Vec::new();
 
     for (i, line) in reader.lines().enumerate() {
