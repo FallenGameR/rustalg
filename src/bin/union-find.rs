@@ -104,17 +104,21 @@ fn open(path: &str) -> Result<Box<dyn BufRead>> {
 
 fn run(config: Config) -> Result<Box<dyn UnionFind>> {
     let reader = open(&config.in_file)?;
+    let connections = parse_connections(reader)?;
+
     let mut alg = RegularUnionFind {
-        connections: parse_connections(reader)?,
+        connections: Vec::new(),
         components: Vec::new(),
     };
 
     println!("New connections:");
-    for (p, q) in &alg.connections {
+    for (p, q) in &connections {
         if !alg.is_connected(*p, *q) {
             alg.union(*p, *q);
         }
     }
+
+    alg.connections = connections;
 
     println!("Total connections: {}", alg.connections.len());
     for (p, q) in &alg.connections {
