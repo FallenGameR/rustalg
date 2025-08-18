@@ -18,12 +18,12 @@ pub struct Config {
     in_file: String,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Node {
     id: usize,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Component {
     id: usize,
 }
@@ -34,13 +34,13 @@ trait UnionFind {
     fn count(&self) -> usize;
 
     /// Checks if two nodes are connected.
-    fn is_connected(&self, p: &Node, q: &Node) -> bool;
+    fn is_connected(&self, p: Node, q: Node) -> bool;
 
     /// Finds the component a node belongs to.
-    fn find(&self, p: &Node) -> Component;
+    fn find(&self, p: Node) -> Component;
 
     /// Adds new node connection into the algorithm.
-    fn union(&mut self, p: &Node, q: &Node);
+    fn union(&mut self, p: Node, q: Node);
 }
 
 struct RegularUnionFind {
@@ -53,16 +53,16 @@ impl UnionFind for RegularUnionFind {
         self.components.len()
     }
 
-    fn is_connected(&self, p: &Node, q: &Node) -> bool {
+    fn is_connected(&self, p: Node, q: Node) -> bool {
         self.find(p) == self.find(q)
     }
 
-    fn find(&self, p: &Node) -> Component {
+    fn find(&self, p: Node) -> Component {
         // todo!()
         Component { id: 0 }
     }
 
-    fn union(&mut self, p: &Node, q: &Node) {
+    fn union(&mut self, p: Node, q: Node) {
         // todo!()
     }
 }
@@ -104,15 +104,15 @@ fn open(path: &str) -> Result<Box<dyn BufRead>> {
 
 fn run(config: Config) -> Result<Box<dyn UnionFind>> {
     let reader = open(&config.in_file)?;
-    let alg = RegularUnionFind {
+    let mut alg = RegularUnionFind {
         connections: parse_connections(reader)?,
         components: Vec::new(),
     };
 
     println!("New connections:");
     for (p, q) in &alg.connections {
-        if !alg.is_connected(p, q) {
-            alg.union(p.clone(), q.clone());
+        if !alg.is_connected(*p, *q) {
+            alg.union(*p, *q);
         }
     }
 
