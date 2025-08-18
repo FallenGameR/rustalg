@@ -11,26 +11,53 @@ pub struct Config {
     in_file: String,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct Node {
     id: usize,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct Component {
     id: usize,
 }
 
+/// Union find algorithm that can say if two specific nodes are transitive connected.
 trait UnionFind {
+
+    /// Returns the number of connected components.
     fn count(&self) -> usize;
+
+    /// Checks if two nodes are connected.
     fn is_connected(&self, p: Node, q: Node) -> bool;
+
+    /// Finds the component a node belongs to.
     fn find(&self, p: Node) -> Component;
+
+    /// Adds new node connection into the algorithm.
     fn union(&mut self, p: Node, q: Node);
 }
 
 struct RegularUnionFind {
     connections: Vec<(Node, Node)>,
     components: Vec<Component>,
+}
+
+impl UnionFind for RegularUnionFind {
+    fn count(&self) -> usize {
+        self.components.len()
+    }
+
+    fn is_connected(&self, p: Node, q: Node) -> bool {
+        self.find(p) == self.find(q)
+    }
+
+    fn find(&self, p: Node) -> Component {
+        todo!()
+    }
+
+    fn union(&mut self, p: Node, q: Node) {
+        todo!()
+    }
 }
 
 // $env:RUSTFLAGS="-Awarnings"
