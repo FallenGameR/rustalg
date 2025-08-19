@@ -34,13 +34,13 @@ trait UnionFind {
     fn count(&self) -> usize;
 
     /// Checks if two nodes are connected.
-    fn is_connected(&self, p: Node, q: Node) -> bool;
+    fn is_connected(&self, l: Node, r: Node) -> bool;
 
     /// Finds the component a node belongs to.
-    fn find(&self, p: Node) -> Component;
+    fn find(&self, n: Node) -> Component;
 
     /// Adds new node connection into the algorithm.
-    fn union(&mut self, p: Node, q: Node);
+    fn union(&mut self, l: Node, r: Node);
 }
 
 /// page 222
