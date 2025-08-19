@@ -2,7 +2,6 @@
 
 use anyhow::{Result, anyhow};
 use clap::{Command, arg};
-use indoc::indoc;
 use rayon::prelude::*;
 use std::{
     fs::File,
@@ -46,12 +45,12 @@ trait UnionFind {
 
 /// page 222
 /// Initialized as a vector of components with the same indexes as node ids.
-struct QuickUnionFind {
+struct QuickFindSlowUnion {
     components: Vec<Component>,
     components_count: usize,
 }
 
-impl QuickUnionFind {
+impl QuickFindSlowUnion {
     // Initially, each node is its own component
     pub fn new(max: Node) -> Self {
         let count = max.id + 1;
@@ -62,7 +61,7 @@ impl QuickUnionFind {
     }
 }
 
-impl UnionFind for QuickUnionFind {
+impl UnionFind for QuickFindSlowUnion {
     fn count(&self) -> usize {
         self.components_count
     }
@@ -133,7 +132,7 @@ fn run(config: Config) -> Result<Box<dyn UnionFind>> {
     let reader = open(&config.in_file)?;
 
     let (max, connections) = parse_connections(reader)?;
-    let mut alg = QuickUnionFind::new(max);
+    let mut alg = QuickFindSlowUnion::new(max);
 
     println!("Total connections: {}", connections.len());
     for (p, q) in &connections {
@@ -197,6 +196,7 @@ fn parse_connections<R: BufRead>(reader: R) -> Result<(Node, Vec<(Node, Node)>)>
 mod tests {
     use super::*;
     use std::io::Cursor;
+    use indoc::indoc;
 
     #[test]
     fn parse_connections_success_case() {
@@ -206,7 +206,7 @@ mod tests {
             2 3
         "};
         let reader = Cursor::new(text);
-        let connections = parse_connections(reader).unwrap();
+        let (_, connections) = parse_connections(reader).unwrap();
 
         let expected = vec![
             (Node { id: 0 }, Node { id: 1 }),
