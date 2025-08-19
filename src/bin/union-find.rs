@@ -11,6 +11,7 @@ use std::{
         Arc,
         atomic::{AtomicU32, Ordering},
     },
+    usize,
 };
 
 #[derive(Debug)]
@@ -43,27 +44,53 @@ trait UnionFind {
     fn union(&mut self, p: Node, q: Node);
 }
 
-struct RegularUnionFind {
-    connections: Vec<(Node, Node)>,
+/// page 222
+/// Initialized as a vector of components with the same indexes as node ids.
+struct QuickUnionFind {
     components: Vec<Component>,
+    components_count: usize,
 }
 
-impl UnionFind for RegularUnionFind {
+impl QuickUnionFind {
+    // Initially, each node is its own component
+    pub fn new(max: Node) -> Self {
+        let count = max.id + 1;
+        Self {
+            components: (0..count).map(|id| Component { id }).collect(),
+            components_count: count,
+        }
+    }
+}
+
+impl UnionFind for QuickUnionFind {
     fn count(&self) -> usize {
-        self.components.len()
+        self.components_count
     }
 
-    fn is_connected(&self, p: Node, q: Node) -> bool {
-        self.find(p) == self.find(q)
+    fn is_connected(&self, l: Node, r: Node) -> bool {
+        self.find(l) == self.find(r)
     }
 
-    fn find(&self, p: Node) -> Component {
-        // todo!()
-        Component { id: 0 }
+    fn find(&self, n: Node) -> Component {
+        self.components[n.id].clone()
     }
 
-    fn union(&mut self, p: Node, q: Node) {
-        // todo!()
+    fn union(&mut self, l: Node, r: Node) {
+        let left = self.find(l);
+        let right = self.find(r);
+
+        // already connected
+        if left == right {
+            return;
+        }
+
+        // leftmost component supersedes all connections where right component was mentioned
+        self.components_count -= 1;
+        for component in &mut self.components {
+            if *component == right {
+                *component = left;
+            }
+        }
     }
 }
 
@@ -104,32 +131,35 @@ fn open(path: &str) -> Result<Box<dyn BufRead>> {
 
 fn run(config: Config) -> Result<Box<dyn UnionFind>> {
     let reader = open(&config.in_file)?;
-    let connections = parse_connections(reader)?;
 
-    let mut alg = RegularUnionFind {
-        connections: Vec::new(),
-        components: Vec::new(),
-    };
+    let (max, connections) = parse_connections(reader)?;
+    let mut alg = QuickUnionFind::new(max);
 
-    println!("New connections:");
+    println!("Total connections: {}", connections.len());
     for (p, q) in &connections {
-        if !alg.is_connected(*p, *q) {
+        if alg.is_connected(*p, *q) {
+            print!("  old");
+        }
+        else {
+            print!("  new");
             alg.union(*p, *q);
         }
+        println!(" {} <-> {}", p.id, q.id);
     }
 
-    alg.connections = connections;
-
-    println!("Total connections: {}", alg.connections.len());
-    for (p, q) in &alg.connections {
-        println!("  {} <-> {}", p.id, q.id);
+    println!("Total components: {}", alg.count());
+    alg.components.sort_by_key(|c| c.id);
+    alg.components.dedup_by_key(|c| c.id);
+    for component in &alg.components {
+        println!("  {}", component.id);
     }
 
     Ok(Box::new(alg))
 }
 
-fn parse_connections<R: BufRead>(reader: R) -> Result<Vec<(Node, Node)>> {
+fn parse_connections<R: BufRead>(reader: R) -> Result<(Node, Vec<(Node, Node)>)> {
     let mut connections: Vec<(Node, Node)> = Vec::new();
+    let mut max = Node { id: usize::MIN };
 
     for (i, line) in reader.lines().enumerate() {
         let line = line?;
@@ -154,9 +184,11 @@ fn parse_connections<R: BufRead>(reader: R) -> Result<Vec<(Node, Node)>> {
         }
 
         connections.push((p, q));
+        max.id = std::cmp::max(max.id, q.id);
+        max.id = std::cmp::max(max.id, p.id);
     }
 
-    Ok(connections)
+    Ok((max, connections))
 }
 
 // Tests
