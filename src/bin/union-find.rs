@@ -43,7 +43,7 @@ trait UnionFind {
     fn union(&mut self, l: Node, r: Node);
 }
 
-/// page 222
+/// Page 222
 /// Initialized as a vector of components with the same indexes as node ids.
 struct QuickFindSlowUnion {
     components: Vec<Component>,
@@ -51,7 +51,7 @@ struct QuickFindSlowUnion {
 }
 
 impl QuickFindSlowUnion {
-    // Initially, each node is its own component
+    /// Initially, each node is its own component
     pub fn new(max: Node) -> Self {
         let count = max.id + 1;
         Self {
@@ -92,6 +92,27 @@ impl UnionFind for QuickFindSlowUnion {
         }
     }
 }
+
+/// Page 224
+/// Initialized as a vecotor of Node links that are connected to themselves.
+struct QuickUnion {
+    links: Vec<Node>,
+    components_count: usize,
+}
+
+impl QuickUnion {
+    /// Initially every node is connected to itself
+    pub fn new(max: Node) -> Self {
+        let count = max.id + 1;
+        Self {
+            links: (0..count).map(|id| Node { id }).collect(),
+            components_count: count,
+        }
+    }
+}
+
+
+
 
 // $env:RUSTFLAGS="-Awarnings"
 // cargo run --release --bin union-find -- .\data\union-find\tinyUF.txt
