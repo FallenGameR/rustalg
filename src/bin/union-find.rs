@@ -95,12 +95,12 @@ impl UnionFind for QuickFindSlowUnion {
 
 /// Page 224
 /// Initialized as a vecotor of Node links that are connected to themselves.
-struct QuickUnion {
+struct QuickUnionSlowFind {
     links: Vec<Node>,
     components_count: usize,
 }
 
-impl QuickUnion {
+impl QuickUnionSlowFind {
     /// Initially every node is connected to itself
     pub fn new(max: Node) -> Self {
         let count = max.id + 1;
@@ -111,8 +111,40 @@ impl QuickUnion {
     }
 }
 
+impl UnionFind for QuickUnionSlowFind {
+    fn count(&self) -> usize {
+        self.components_count
+    }
 
+    fn is_connected(&self, l: Node, r: Node) -> bool {
+        self.find(l) == self.find(r)
+    }
 
+    /// Component is identified as root Node that points to itself
+    fn find(&self, n: Node) -> Component {
+        let mut cursor = n;
+
+        while self.links[cursor.id] != cursor {
+            cursor = self.links[cursor.id];
+        }
+
+        Component { id: cursor.id }
+    }
+
+    fn union(&mut self, l: Node, r: Node) {
+        let left = self.find(l);
+        let right = self.find(r);
+
+        // already connected
+        if left == right {
+            return;
+        }
+
+        // leftmost component becomes parent of right one
+        self.components_count -= 1;
+        self.links[r.id] = l;
+    }
+}
 
 // $env:RUSTFLAGS="-Awarnings"
 // cargo run --release --bin union-find -- .\data\union-find\tinyUF.txt
@@ -123,7 +155,7 @@ fn main() {
     }
 }
 
-pub fn get_args() -> Result<Config> {
+fn get_args() -> Result<Config> {
     let mut matches = Command::new("union-find")
         .version("1.0")
         .author("FallenGameR")
@@ -153,9 +185,11 @@ fn run(config: Config) -> Result<Box<dyn UnionFind>> {
     let reader = open(&config.in_file)?;
 
     let (max, connections) = parse_connections(reader)?;
-    let mut alg = QuickFindSlowUnion::new(max);
+    //let mut alg = QuickFindSlowUnion::new(max);
+    let mut alg = QuickUnionSlowFind::new(max);
 
     println!("Total connections: {}", connections.len());
+    println!("Total componenets: {}", alg.components_count);
     for (p, q) in &connections {
         if alg.is_connected(*p, *q) {
             print!("  old");
@@ -164,14 +198,19 @@ fn run(config: Config) -> Result<Box<dyn UnionFind>> {
             print!("  new");
             alg.union(*p, *q);
         }
-        println!(" {} <-> {}", p.id, q.id);
+        println!(" {} <-> {}, {}", p.id, q.id, alg.components_count);
     }
 
     println!("Total components: {}", alg.count());
-    alg.components.sort_by_key(|c| c.id);
-    alg.components.dedup_by_key(|c| c.id);
-    for component in &alg.components {
-        println!("  {}", component.id);
+
+    //alg.components.sort_by_key(|c| c.id);
+    //alg.components.dedup_by_key(|c| c.id);
+    //for component in &alg.components {
+    //    println!("  {}", component.id);
+    //}
+
+    for (id, link) in alg.links.iter().enumerate() {
+        println!("  {}: {}", id, link.id);
     }
 
     Ok(Box::new(alg))
