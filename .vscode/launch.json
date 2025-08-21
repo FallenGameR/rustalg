@@ -1,16 +1,32 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    // Rust: launch with CodeLLDB via cargo, pass input file as arg
     "version": "0.2.0",
     "configurations": [
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug",
-            "program": "${workspaceFolder}/<executable file>",
-            "args": [],
-            "cwd": "${workspaceFolder}"
+            "name": "Rust: Debug union-find",
+            "cargo": {
+                "args": ["run", "--bin", "union-find"],
+                "filter": { "kind": "bin" }
+            },
+            "args": ["${workspaceFolder}/data/union-find/tinyUF.txt"],
+            "cwd": "${workspaceFolder}",
+            "env": {},
+            "sourceLanguages": ["rust"]
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Rust: Release union-find",
+            "cargo": {
+                "args": ["run", "--release", "--bin", "union-find"],
+                "filter": { "kind": "bin" }
+            },
+            "args": ["${workspaceFolder}/data/union-find/tinyUF.txt"],
+            "cwd": "${workspaceFolder}",
+            "env": {},
+            "sourceLanguages": ["rust"]
         }
     ]
 }
