@@ -140,9 +140,9 @@ impl UnionFind for QuickUnionSlowFind {
             return;
         }
 
-        // leftmost component becomes parent of right one
+        // leftmost root gets rightmost root as its parent
         self.components_count -= 1;
-        self.links[r.id] = l;
+        self.links[left.id] = Node { id: right.id };
     }
 }
 

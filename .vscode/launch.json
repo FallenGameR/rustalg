@@ -1,5 +1,18 @@
 {
     // Rust: launch with CodeLLDB via cargo, pass input file as arg
+    //
+    // Debugger is having issues on displaying vectors of tuples on stable-x86_64-pc-windows-msvc toolchain
+    // The following helped:
+    //
+    // rustup toolchain install stable-x86_64-pc-windows-gnu
+    // rustup default stable-x86_64-pc-windows-gnu
+    // winget install MSYS2.MSYS2
+    // in msys console: pacman -S --needed base-devel mingw-w64-ucrt-x86_64-toolchain mingw-w64-ucrt-x86_64-nasm
+    // reboot
+    // $env:path += ";C:\msys64\ucrt64\bin\"
+    //
+    // But debug console now has "DIE has DW_AT_ranges" errors
+
     "version": "0.2.0",
     "configurations": [
         {
