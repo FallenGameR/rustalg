@@ -13,6 +13,8 @@ use std::{
     usize,
 };
 
+//-----------------------------------------------------------------/ structs
+
 #[derive(Debug)]
 pub struct Config {
     in_file: String,
@@ -28,6 +30,8 @@ pub struct Component {
     id: usize,
 }
 
+//-------------------------------------------------------------------/ traits
+
 /// Union find algorithm that can say if two specific nodes are transitive connected.
 trait UnionFind {
     /// Returns the number of connected components.
@@ -42,6 +46,8 @@ trait UnionFind {
     /// Adds new node connection into the algorithm.
     fn union(&mut self, l: Node, r: Node);
 }
+
+//---------------------------------------------------------/ QuickFindSlowUnion
 
 /// Page 222
 /// Initialized as a vector of components with the same indexes as node ids.
@@ -92,6 +98,8 @@ impl UnionFind for QuickFindSlowUnion {
         }
     }
 }
+
+//---------------------------------------------------/ QuickUnionSlowFind
 
 /// Page 224
 /// Initialized as a vecotor of Node links that are connected to themselves.
@@ -146,8 +154,72 @@ impl UnionFind for QuickUnionSlowFind {
     }
 }
 
+/// Page 227
+/// Initialized as a vecotor of Node links that are connected to themselves
+/// plus vector of heights for all the roots.
+struct WeightedUnionFind {
+    links: Vec<Node>,
+    heights: Vec<usize>,
+    components_count: usize,
+}
+
+impl WeightedUnionFind {
+    /// Initially every node is connected to itself and every height is 1
+    pub fn new(max: Node) -> Self {
+        let count = max.id + 1;
+        Self {
+            links: (0..count).map(|id| Node { id }).collect(),
+            heights: vec![1; count],
+            components_count: count,
+        }
+    }
+}
+
+impl UnionFind for WeightedUnionFind {
+    fn count(&self) -> usize {
+        self.components_count
+    }
+
+    fn is_connected(&self, l: Node, r: Node) -> bool {
+        self.find(l) == self.find(r)
+    }
+
+    fn find(&self, n: Node) -> Component {
+        let mut cursor = n;
+
+        while self.links[cursor.id] != cursor {
+            cursor = self.links[cursor.id];
+        }
+
+        Component { id: cursor.id }
+    }
+
+    fn union(&mut self, l: Node, r: Node) {
+        let left = self.find(l);
+        let right = self.find(r);
+
+        // already connected
+        if left == right {
+            return;
+        }
+
+        // connect smaller height tree to the larger tree
+        self.components_count -= 1;
+        if self.heights[left.id] <= self.heights[right.id] {
+            self.links[left.id] = Node { id: right.id };
+            self.heights[right.id] += self.heights[left.id];
+        }
+        else {
+            self.links[right.id] = Node { id: left.id };
+            self.heights[left.id] += self.heights[right.id];
+        }
+    }
+}
+
+//--------------------------------------------------------------/ functions
 // $env:RUSTFLAGS="-Awarnings"
 // cargo run --release --bin union-find -- .\data\union-find\tinyUF.txt
+
 fn main() {
     if let Err(error) = get_args().and_then(run) {
         eprintln!("{error}");
@@ -186,19 +258,20 @@ fn run(config: Config) -> Result<Box<dyn UnionFind>> {
 
     let (max, connections) = parse_connections(reader)?;
     //let mut alg = QuickFindSlowUnion::new(max);
-    let mut alg = QuickUnionSlowFind::new(max);
+    //let mut alg = QuickUnionSlowFind::new(max);
+    let mut alg = WeightedUnionFind::new(max);
 
     println!("Total connections: {}", connections.len());
     println!("Total componenets: {}", alg.components_count);
     for (p, q) in &connections {
         if alg.is_connected(*p, *q) {
-            print!("  old");
+            //print!("  old");
         }
         else {
-            print!("  new");
+            //print!("  new");
             alg.union(*p, *q);
         }
-        println!(" {} <-> {}, {}", p.id, q.id, alg.components_count);
+        //println!(" {} <-> {}, {}", p.id, q.id, alg.components_count);
     }
 
     println!("Total components: {}", alg.count());
@@ -209,9 +282,9 @@ fn run(config: Config) -> Result<Box<dyn UnionFind>> {
     //    println!("  {}", component.id);
     //}
 
-    for (id, link) in alg.links.iter().enumerate() {
-        println!("  {}: {}", id, link.id);
-    }
+    //for (id, link) in alg.links.iter().enumerate() {
+    //    println!("  {}: {}", id, link.id);
+    //}
 
     Ok(Box::new(alg))
 }
@@ -250,8 +323,9 @@ fn parse_connections<R: BufRead>(reader: R) -> Result<(Node, Vec<(Node, Node)>)>
     Ok((max, connections))
 }
 
-// Tests
+//---------------------------------------------------------------/ Tests
 // cargo test --bin union-find
+
 #[cfg(test)]
 mod tests {
     use super::*;
