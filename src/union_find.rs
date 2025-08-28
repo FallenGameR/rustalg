@@ -23,7 +23,7 @@ pub struct Component {
 pub struct WeightedUnionFind {
     links: Vec<Node>,
     heights: Vec<usize>,
-    pub components_count: usize,
+    components_count: usize,
 }
 
 //-------------------------------------------------------------------/ traits
@@ -45,12 +45,28 @@ pub trait UnionFind {
 
 //-------------------------------------------------------------------/ implementations
 
+impl Node {
+    fn new(id: usize) -> Self {
+        Self { id }
+    }
+
+    fn from(component: Component) -> Self {
+        Self { id: component.id }
+    }
+}
+
+impl Component {
+    fn from(node: Node) -> Self {
+        Self { id: node.id }
+    }
+}
+
 impl WeightedUnionFind {
     /// Initially every node is connected to itself and every height is 1
     pub fn new(max: Node) -> Self {
         let count = max.id + 1;
         Self {
-            links: (0..count).map(|id| Node { id }).collect(),
+            links: (0..count).map(|id| Node::new(id)).collect(),
             heights: vec![1; count],
             components_count: count,
         }
@@ -73,7 +89,7 @@ impl UnionFind for WeightedUnionFind {
             cursor = self.links[cursor.id];
         }
 
-        Component { id: cursor.id }
+        Component::from(cursor)
     }
 
     fn union(&mut self, l: Node, r: Node) {
@@ -88,12 +104,60 @@ impl UnionFind for WeightedUnionFind {
         // connect smaller height tree to the larger tree
         self.components_count -= 1;
         if self.heights[left.id] <= self.heights[right.id] {
-            self.links[left.id] = Node { id: right.id };
+            self.links[left.id] = Node::from(right);
             self.heights[right.id] += self.heights[left.id];
         }
         else {
-            self.links[right.id] = Node { id: left.id };
+            self.links[right.id] = Node::from(left);
             self.heights[left.id] += self.heights[right.id];
         }
+    }
+}
+
+// --------------------------------------------------------------------/ tests
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn initial_state() {
+        let uf = WeightedUnionFind::new(Node::new(4));
+
+        // There are 0..=4 components in total, none are connected yet
+        assert_eq!(uf.count(), 5);
+
+        // Each one has itself as its root
+        assert_eq!(uf.find(Node::new(3)), Component::from(Node::new(3)));
+    }
+
+    #[test]
+    fn union_connects_and_decreases_count() {
+        // 4 components
+        let mut uf = WeightedUnionFind::new(Node::new(3));
+
+        // connect 0,1 -> 3 components
+        uf.union(Node::new(0), Node::new(1));
+        assert!(uf.is_connected(Node::new(0), Node::new(1)));
+        assert!(!uf.is_connected(Node::new(0), Node::new(2)));
+        assert_eq!(uf.count(), 3);
+
+        // connect 2,3 -> 2 components
+        uf.union(Node::new(2), Node::new(3));
+        assert!(uf.is_connected(Node::new(2), Node::new(3)));
+        assert_eq!(uf.count(), 2);
+
+        // repeated connection doesn't change component count
+        uf.union(Node::new(0), Node::new(1));
+        assert_eq!(uf.count(), 2);
+    }
+
+    #[test]
+    fn transitive_connection() {
+        let mut uf = WeightedUnionFind::new(Node::new(4));
+        uf.union(Node::new(0), Node::new(1));
+        uf.union(Node::new(1), Node::new(2));
+        assert!(uf.is_connected(Node::new(0), Node::new(2)));
+        assert!(!uf.is_connected(Node::new(0), Node::new(3)));
     }
 }

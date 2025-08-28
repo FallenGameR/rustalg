@@ -357,7 +357,7 @@ fn run(config: Config) -> Result<Box<dyn UnionFind>> {
     let mut alg = WeightedUnionFind::new(max);
 
     println!("Total connections: {}", connections.len());
-    println!("Total componenets: {}", alg.components_count);
+    println!("Total componenets: {}", alg.count());
     for (p, q) in &connections {
         if alg.is_connected(*p, *q) {
             //print!("  old");
