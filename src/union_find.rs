@@ -1,3 +1,5 @@
+/// Page 227
+
 //-----------------------------------------------------------------/ imports
 
 use std::{
@@ -14,6 +16,14 @@ pub struct Node {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Component {
     id: usize,
+}
+
+/// Initialized as a vecotor of Node links that are connected to themselves
+/// plus vector of heights for all the roots.
+pub struct WeightedUnionFind {
+    links: Vec<Node>,
+    heights: Vec<usize>,
+    pub components_count: usize,
 }
 
 //-------------------------------------------------------------------/ traits
@@ -33,14 +43,7 @@ pub trait UnionFind {
     fn union(&mut self, l: Node, r: Node);
 }
 
-/// Page 227
-/// Initialized as a vecotor of Node links that are connected to themselves
-/// plus vector of heights for all the roots.
-pub struct WeightedUnionFind {
-    links: Vec<Node>,
-    heights: Vec<usize>,
-    pub components_count: usize,
-}
+//-------------------------------------------------------------------/ implementations
 
 impl WeightedUnionFind {
     /// Initially every node is connected to itself and every height is 1
