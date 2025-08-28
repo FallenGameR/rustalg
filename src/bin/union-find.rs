@@ -157,6 +157,8 @@ impl UnionFind for QuickUnionSlowFind {
 /// Page 227
 /// Initialized as a vecotor of Node links that are connected to themselves
 /// plus vector of heights for all the roots.
+///
+/// The overall winner. If it used the trait can remove mut from find and is_connected
 struct WeightedUnionFind {
     links: Vec<Node>,
     heights: Vec<usize>,
