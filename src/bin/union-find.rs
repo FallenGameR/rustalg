@@ -38,10 +38,10 @@ trait UnionFind {
     fn count(&self) -> usize;
 
     /// Checks if two nodes are connected.
-    fn is_connected(&self, l: Node, r: Node) -> bool;
+    fn is_connected(&mut self, l: Node, r: Node) -> bool;
 
     /// Finds the component a node belongs to.
-    fn find(&self, n: Node) -> Component;
+    fn find(&mut self, n: Node) -> Component;
 
     /// Adds new node connection into the algorithm.
     fn union(&mut self, l: Node, r: Node);
@@ -72,11 +72,11 @@ impl UnionFind for QuickFindSlowUnion {
         self.components_count
     }
 
-    fn is_connected(&self, l: Node, r: Node) -> bool {
+    fn is_connected(&mut self, l: Node, r: Node) -> bool {
         self.find(l) == self.find(r)
     }
 
-    fn find(&self, n: Node) -> Component {
+    fn find(&mut self, n: Node) -> Component {
         self.components[n.id].clone()
     }
 
@@ -124,12 +124,12 @@ impl UnionFind for QuickUnionSlowFind {
         self.components_count
     }
 
-    fn is_connected(&self, l: Node, r: Node) -> bool {
+    fn is_connected(&mut self, l: Node, r: Node) -> bool {
         self.find(l) == self.find(r)
     }
 
     /// Component is identified as root Node that points to itself
-    fn find(&self, n: Node) -> Component {
+    fn find(&mut self, n: Node) -> Component {
         let mut cursor = n;
 
         while self.links[cursor.id] != cursor {
@@ -180,11 +180,11 @@ impl UnionFind for WeightedUnionFind {
         self.components_count
     }
 
-    fn is_connected(&self, l: Node, r: Node) -> bool {
+    fn is_connected(&mut self, l: Node, r: Node) -> bool {
         self.find(l) == self.find(r)
     }
 
-    fn find(&self, n: Node) -> Component {
+    fn find(&mut self, n: Node) -> Component {
         let mut cursor = n;
 
         while self.links[cursor.id] != cursor {
@@ -242,11 +242,15 @@ impl UnionFind for WeightedUnionFindWithPathCompression {
         self.components_count
     }
 
-    fn is_connected(&self, l: Node, r: Node) -> bool {
+    fn is_connected(&mut self, l: Node, r: Node) -> bool {
         self.find(l) == self.find(r)
     }
 
-    fn find(&self, n: Node) -> Component {
+    /// When separate array was used to store all traversed nodes the perf got down
+    /// to 538ms on large set compared to 338ms for WeightedUnionFind
+    ///
+    /// Trying out incremental compression
+    fn find(&mut self, n: Node) -> Component {
         let mut cursor = n;
         let mut traversed = Vec::new();
 
@@ -347,6 +351,7 @@ fn run(config: Config) -> Result<Box<dyn UnionFind>> {
     }
 
     println!("Total components: {}", alg.count());
+    println!("Latest alg is used");
 
     //alg.components.sort_by_key(|c| c.id);
     //alg.components.dedup_by_key(|c| c.id);
