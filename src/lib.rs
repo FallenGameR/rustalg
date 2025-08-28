@@ -1,3 +1,8 @@
-pub mod union_find;
+// Reference nested modules but don't export them
+mod union_find;
 
-pub use union_find::{Node, Component, WeightedUnionFind, UnionFind};
+// Export modules with shorter names
+pub mod uf {
+    #[doc(inline)]
+    pub use super::union_find::*;
+}

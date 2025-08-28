@@ -8,7 +8,7 @@ use std::{
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Node {
-    id: usize,
+    pub id: usize,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -39,7 +39,7 @@ pub trait UnionFind {
 pub struct WeightedUnionFind {
     links: Vec<Node>,
     heights: Vec<usize>,
-    components_count: usize,
+    pub components_count: usize,
 }
 
 impl WeightedUnionFind {

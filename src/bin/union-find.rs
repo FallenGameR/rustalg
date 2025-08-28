@@ -6,12 +6,14 @@ use clap::{Command, arg};
 use std::{
     fs::File,
     io::{BufRead, BufReader},
-//    sync::{
-//        Arc,
-//        atomic::{AtomicU32, Ordering},
-//    },
+    //    sync::{
+    //        Arc,
+    //        atomic::{AtomicU32, Ordering},
+    //    },
     usize,
 };
+
+use rustalg::uf::*;
 
 //-----------------------------------------------------------------/ structs
 
@@ -20,6 +22,7 @@ pub struct Config {
     in_file: String,
 }
 
+/*
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Node {
     id: usize,
@@ -29,9 +32,11 @@ pub struct Node {
 pub struct Component {
     id: usize,
 }
+*/
 
 //-------------------------------------------------------------------/ traits
 
+/*
 /// Union find algorithm that can say if two specific nodes are transitive connected.
 trait UnionFind {
     /// Returns the number of connected components.
@@ -273,34 +278,35 @@ impl UnionFind for WeightedUnionFindWithPathCompression {
 
         let root = cursor.id;
         //for node in traversed {
-        //    self.links[node.id] = Node { id: root };
-        //    self.heights[node.id] = 1;
-        //}
+            //    self.links[node.id] = Node { id: root };
+            //    self.heights[node.id] = 1;
+            //}
 
-        Component { id: root }
+            Component { id: root }
+        }
+
+        fn union(&mut self, l: Node, r: Node) {
+            let left = self.find(l);
+            let right = self.find(r);
+
+            // already connected
+            if left == right {
+                return;
+            }
+
+            // connect smaller height tree to the larger tree
+            self.components_count -= 1;
+            if self.heights[left.id] <= self.heights[right.id] {
+                self.links[left.id] = Node { id: right.id };
+                self.heights[right.id] += self.heights[left.id];
+            }
+            else {
+                self.links[right.id] = Node { id: left.id };
+                self.heights[left.id] += self.heights[right.id];
+            }
+        }
     }
-
-    fn union(&mut self, l: Node, r: Node) {
-        let left = self.find(l);
-        let right = self.find(r);
-
-        // already connected
-        if left == right {
-            return;
-        }
-
-        // connect smaller height tree to the larger tree
-        self.components_count -= 1;
-        if self.heights[left.id] <= self.heights[right.id] {
-            self.links[left.id] = Node { id: right.id };
-            self.heights[right.id] += self.heights[left.id];
-        }
-        else {
-            self.links[right.id] = Node { id: left.id };
-            self.heights[left.id] += self.heights[right.id];
-        }
-    }
-}
+*/
 
 //--------------------------------------------------------------/ functions
 // $env:RUSTFLAGS="-Awarnings"
@@ -347,15 +353,15 @@ fn run(config: Config) -> Result<Box<dyn UnionFind>> {
     //let mut alg = QuickFindSlowUnion::new(max);
     //let mut alg = QuickUnionSlowFind::new(max);
     //let mut alg = WeightedUnionFind::new(max);
-    let mut alg = WeightedUnionFindWithPathCompression::new(max);
+    //let mut alg = WeightedUnionFindWithPathCompression::new(max);
+    let mut alg = WeightedUnionFind::new(max);
 
     println!("Total connections: {}", connections.len());
     println!("Total componenets: {}", alg.components_count);
     for (p, q) in &connections {
         if alg.is_connected(*p, *q) {
             //print!("  old");
-        }
-        else {
+        } else {
             //print!("  new");
             alg.union(*p, *q);
         }
@@ -418,8 +424,8 @@ fn parse_connections<R: BufRead>(reader: R) -> Result<(Node, Vec<(Node, Node)>)>
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::io::Cursor;
     use indoc::indoc;
+    use std::io::Cursor;
 
     #[test]
     fn parse_connections_success_case() {
