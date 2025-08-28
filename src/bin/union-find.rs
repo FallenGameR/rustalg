@@ -249,21 +249,31 @@ impl UnionFind for WeightedUnionFindWithPathCompression {
     /// When separate array was used to store all traversed nodes the perf got down
     /// to 538ms on large set compared to 338ms for WeightedUnionFind
     ///
-    /// Trying out incremental compression
+    /// Trying out incremental compression - the increase is only marginal - 10ms
+    ///
+    /// And to do the compresion I had to add mutability to find and is_connected
+    /// That is a side effect not quite expected by the user
     fn find(&mut self, n: Node) -> Component {
         let mut cursor = n;
-        let mut traversed = Vec::new();
+        //let mut traversed: Vec<Node> = Vec::new();
 
         while self.links[cursor.id] != cursor {
-            traversed.push(cursor);
-            cursor = self.links[cursor.id];
+            // Total compression
+            //traversed.push(cursor);
+
+            // Incremental compression
+            let parent = self.links[cursor.id];
+            self.links[cursor.id] = self.links[parent.id];
+            self.heights[cursor.id] -= 1;
+
+            cursor = parent;
         }
 
         let root = cursor.id;
-        for node in traversed {
-            self.links[node.id] = Node { id: root };
-            self.heights[node.id] = 1;
-        }
+        //for node in traversed {
+        //    self.links[node.id] = Node { id: root };
+        //    self.heights[node.id] = 1;
+        //}
 
         Component { id: root }
     }
@@ -294,7 +304,7 @@ impl UnionFind for WeightedUnionFindWithPathCompression {
 // $env:RUSTFLAGS="-Awarnings"
 // cargo run --release --bin union-find -- .\data\union-find\tinyUF.txt
 // hyperfine.exe --warmup 1 ".\target\release\union-find.exe .\data\union-find\largeUF.txt" # 338ms for WeightedUnionFind
-
+// hyperfine.exe --warmup 1 ".\target\release\union-find.exe .\data\union-find\largeUF.txt" # 328ms for WeightedUnionFindWithPathCompression (incremental)
 fn main() {
     if let Err(error) = get_args().and_then(run) {
         eprintln!("{error}");
@@ -351,7 +361,7 @@ fn run(config: Config) -> Result<Box<dyn UnionFind>> {
     }
 
     println!("Total components: {}", alg.count());
-    println!("Latest alg is used");
+    println!("Latest alg is used yay!");
 
     //alg.components.sort_by_key(|c| c.id);
     //alg.components.dedup_by_key(|c| c.id);
