@@ -216,9 +216,80 @@ impl UnionFind for WeightedUnionFind {
     }
 }
 
+/// Page 231
+/// Initialized as a vecotor of Node links that are connected to themselves
+/// plus vector of heights for all the roots.
+struct WeightedUnionFindWithPathCompression {
+    links: Vec<Node>,
+    heights: Vec<usize>,
+    components_count: usize,
+}
+
+impl WeightedUnionFindWithPathCompression {
+    /// Initially every node is connected to itself and every height is 1
+    pub fn new(max: Node) -> Self {
+        let count = max.id + 1;
+        Self {
+            links: (0..count).map(|id| Node { id }).collect(),
+            heights: vec![1; count],
+            components_count: count,
+        }
+    }
+}
+
+impl UnionFind for WeightedUnionFindWithPathCompression {
+    fn count(&self) -> usize {
+        self.components_count
+    }
+
+    fn is_connected(&self, l: Node, r: Node) -> bool {
+        self.find(l) == self.find(r)
+    }
+
+    fn find(&self, n: Node) -> Component {
+        let mut cursor = n;
+        let mut traversed = Vec::new();
+
+        while self.links[cursor.id] != cursor {
+            traversed.push(cursor);
+            cursor = self.links[cursor.id];
+        }
+
+        let root = cursor.id;
+        for node in traversed {
+            self.links[node.id] = Node { id: root };
+            self.heights[node.id] = 1;
+        }
+
+        Component { id: root }
+    }
+
+    fn union(&mut self, l: Node, r: Node) {
+        let left = self.find(l);
+        let right = self.find(r);
+
+        // already connected
+        if left == right {
+            return;
+        }
+
+        // connect smaller height tree to the larger tree
+        self.components_count -= 1;
+        if self.heights[left.id] <= self.heights[right.id] {
+            self.links[left.id] = Node { id: right.id };
+            self.heights[right.id] += self.heights[left.id];
+        }
+        else {
+            self.links[right.id] = Node { id: left.id };
+            self.heights[left.id] += self.heights[right.id];
+        }
+    }
+}
+
 //--------------------------------------------------------------/ functions
 // $env:RUSTFLAGS="-Awarnings"
 // cargo run --release --bin union-find -- .\data\union-find\tinyUF.txt
+// hyperfine.exe --warmup 1 ".\target\release\union-find.exe .\data\union-find\largeUF.txt" # 338ms for WeightedUnionFind
 
 fn main() {
     if let Err(error) = get_args().and_then(run) {
@@ -259,7 +330,8 @@ fn run(config: Config) -> Result<Box<dyn UnionFind>> {
     let (max, connections) = parse_connections(reader)?;
     //let mut alg = QuickFindSlowUnion::new(max);
     //let mut alg = QuickUnionSlowFind::new(max);
-    let mut alg = WeightedUnionFind::new(max);
+    //let mut alg = WeightedUnionFind::new(max);
+    let mut alg = WeightedUnionFindWithPathCompression::new(max);
 
     println!("Total connections: {}", connections.len());
     println!("Total componenets: {}", alg.components_count);
