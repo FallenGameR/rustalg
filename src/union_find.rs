@@ -49,13 +49,15 @@ impl Node {
     fn new(id: usize) -> Self {
         Self { id }
     }
+}
 
-    fn from(component: Component) -> Self {
-        Self { id: component.id }
+impl From<Component> for Node {
+    fn from(c: Component) -> Self {
+        Self { id: c.id }
     }
 }
 
-impl Component {
+impl From<Node> for Component {
     fn from(node: Node) -> Self {
         Self { id: node.id }
     }
