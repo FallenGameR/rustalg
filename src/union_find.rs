@@ -46,7 +46,7 @@ pub trait UnionFind {
 //-------------------------------------------------------------------/ implementations
 
 impl Node {
-    fn new(id: usize) -> Self {
+    pub fn new(id: usize) -> Self {
         Self { id }
     }
 }
@@ -118,6 +118,7 @@ impl UnionFind for WeightedUnionFind {
 
 // --------------------------------------------------------------------/ tests
 
+// Non-pub members can be tested here
 #[cfg(test)]
 mod tests {
     use super::*;
