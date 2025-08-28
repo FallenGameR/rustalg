@@ -1,16 +1,10 @@
-use anyhow::{Result, anyhow};
+//-----------------------------------------------------------------/ imports
+
 use std::{
-    fs::File,
-    io::{BufRead, BufReader},
     usize,
 };
 
 //-----------------------------------------------------------------/ structs
-
-#[derive(Debug)]
-pub struct Config {
-    in_file: String,
-}
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Node {
@@ -25,7 +19,7 @@ pub struct Component {
 //-------------------------------------------------------------------/ traits
 
 /// Union find algorithm that can say if two specific nodes are transitive connected.
-trait UnionFind {
+pub trait UnionFind {
     /// Returns the number of connected components.
     fn count(&self) -> usize;
 
@@ -42,9 +36,7 @@ trait UnionFind {
 /// Page 227
 /// Initialized as a vecotor of Node links that are connected to themselves
 /// plus vector of heights for all the roots.
-///
-/// The overall winner. If it used the trait can remove mut from find and is_connected
-struct WeightedUnionFind {
+pub struct WeightedUnionFind {
     links: Vec<Node>,
     heights: Vec<usize>,
     components_count: usize,
@@ -67,11 +59,11 @@ impl UnionFind for WeightedUnionFind {
         self.components_count
     }
 
-    fn is_connected(&mut self, l: Node, r: Node) -> bool {
+    fn is_connected(&self, l: Node, r: Node) -> bool {
         self.find(l) == self.find(r)
     }
 
-    fn find(&mut self, n: Node) -> Component {
+    fn find(&self, n: Node) -> Component {
         let mut cursor = n;
 
         while self.links[cursor.id] != cursor {
