@@ -13,8 +13,8 @@ use std::{
     usize,
 };
 
-//use rustalg::sort::*;
 use rustalg::args::*;
+use rustalg::sort::*;
 
 
 //--------------------------------------------------------------/ functions

@@ -1,5 +1,6 @@
 // Export these submodules as they are
 pub mod args;
+pub mod sort;
 
 // Reference nested modules but don't export them
 mod union_find;
