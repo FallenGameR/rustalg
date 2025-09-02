@@ -2,17 +2,22 @@ use super::Sort;
 
 use std::fmt::Display;
 
-pub struct SelectionSort<T: PartialOrd + Display> {
+pub struct SelectionSort<T> {
     data: Vec<T>,
 }
 
-impl<T: PartialOrd + Display> SelectionSort<T> {
+impl<T> SelectionSort<T> {
     pub fn new(data: Vec<T>) -> Self {
         SelectionSort { data }
     }
 }
 
-impl<T: PartialOrd + Display> Sort<T> for SelectionSort<T> {
+impl<T> Sort for SelectionSort<T>
+where
+    T: PartialOrd + Display,
+{
+    type Item = T;
+
     fn elements(&self) -> &[T] {
         &self.data
     }
@@ -24,4 +29,5 @@ impl<T: PartialOrd + Display> Sort<T> for SelectionSort<T> {
     fn sort(&mut self) {
         !todo!("Implement selection sort algorithm");
     }
+
 }

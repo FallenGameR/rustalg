@@ -4,10 +4,12 @@ pub use selection_sort::*;
 
 use std::fmt::Display;
 
-pub trait Sort<T: PartialOrd + Display> {
-    fn elements(&self) -> &[T];
+pub trait Sort {
+    type Item: PartialOrd + Display;
 
-    fn elements_mut(&mut self) -> &mut [T];
+    fn elements(&self) -> &[Self::Item];
+
+    fn elements_mut(&mut self) -> &mut [Self::Item];
 
     fn sort(&mut self);
 
@@ -15,7 +17,7 @@ pub trait Sort<T: PartialOrd + Display> {
         self.elements_mut().swap(i, j);
     }
 
-    fn less(a: &T, b: &T) -> bool {
+    fn less(a: &Self::Item, b: &Self::Item) -> bool {
         a < b
     }
 
