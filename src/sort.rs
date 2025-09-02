@@ -1,3 +1,7 @@
+pub mod selection_sort;
+
+pub use selection_sort::*;
+
 use std::fmt::Display;
 
 pub trait Sort<T: PartialOrd + Display> {
