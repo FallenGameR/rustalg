@@ -1,3 +1,6 @@
+// Export these submodules as they are
+pub mod args;
+
 // Reference nested modules but don't export them
 mod union_find;
 
@@ -6,3 +9,4 @@ pub mod uf {
     #[doc(inline)]
     pub use super::union_find::*;
 }
+

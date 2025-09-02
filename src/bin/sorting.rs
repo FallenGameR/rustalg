@@ -14,13 +14,8 @@ use std::{
 };
 
 //use rustalg::sort::*;
+use rustalg::args::*;
 
-//-----------------------------------------------------------------/ structs
-
-#[derive(Debug)]
-pub struct Config {
-    in_file: String,
-}
 
 //--------------------------------------------------------------/ functions
 // $env:RUSTFLAGS="-Awarnings"
@@ -35,33 +30,26 @@ fn main() {
 }
 
 fn get_args() -> Result<Config> {
-    let mut matches = Command::new("union-find")
+    let mut matches = Command::new("sorting")
         .version("1.0")
         .author("FallenGameR")
-        .about("Outputs connection of not yet connected sites, at the end prints total number of connected components")
+        .about("Sorts a file or input stream")
         .args([
-            arg!([INPUT_FILE] "Input file with pairs of connected sites specified by ids, stdin is -").default_value("-"),
+            arg!([INPUT_FILE] "Input file with integer numbers, stdin is -").default_value("-"),
         ])
         .get_matches();
 
-    Ok(Config {
-        in_file: matches
-            .remove_one("INPUT_FILE")
-            .expect("Input file not provided"),
-    })
+    let in_file = matches
+        .remove_one("INPUT_FILE")
+        .expect("Input file not provided");
+
+    Ok(Config::new(in_file))
 }
 
-fn open(path: &str) -> Result<Box<dyn BufRead>> {
-    match path {
-        "-" => Ok(Box::new(BufReader::new(std::io::stdin()))),
-        _ => Ok(Box::new(BufReader::new(
-            File::open(path).map_err(|e| anyhow!("{path}: {e}"))?,
-        ))),
-    }
-}
+fn run(config: Config) -> Result<()> {
+    let reader = open(&config)?;
 
-
-fn run(_config: Config) -> Result<()> {
     println!("Latest alg is to be done, yay!");
+
     Ok(())
 }
