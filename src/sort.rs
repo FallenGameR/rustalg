@@ -1,11 +1,13 @@
 use std::fmt::Display;
 
 pub trait Sort<T: PartialOrd + Display> {
-    fn get_elements(&self) -> &[T];
+    fn get_elements(&self) -> &mut [T];
 
     fn sort(&mut self);
 
-    fn exchange(&mut self, i: usize, j: usize);
+    fn exchange(&mut self, i: usize, j: usize) {
+        self.get_elements().swap(i, j);
+    }
 
     fn less(a: &T, b: &T) -> bool {
         a < b

@@ -35,7 +35,7 @@ fn get_args() -> Result<Config> {
         .author("FallenGameR")
         .about("Sorts a file or input stream")
         .args([
-            arg!([INPUT_FILE] "Input file with integer numbers, stdin is -").default_value("-"),
+            arg!([INPUT_FILE] "Input file with strings to sort on each line, stdin is -").default_value("-"),
         ])
         .get_matches();
 
