@@ -1,6 +1,8 @@
 pub mod selection_sort;
+pub mod insertion_sort;
 
 pub use selection_sort::*;
+pub use insertion_sort::*;
 
 use std::fmt::Display;
 
