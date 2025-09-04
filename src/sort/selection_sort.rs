@@ -27,7 +27,18 @@ where
     }
 
     fn sort(&mut self) {
-        !todo!("Implement selection sort algorithm");
-    }
+        let data = &mut self.data;
 
+        for i in 1..data.len() {
+            let current = &data[i-1];
+
+            for j in i..data.len() {
+                let candidate = &data[j];
+
+                if candidate < current {
+                    data.swap(i-1, j);
+                }
+            }
+        }
+    }
 }
