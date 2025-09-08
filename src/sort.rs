@@ -19,8 +19,8 @@ pub trait Sort {
         self.elements_mut().swap(i, j);
     }
 
-    fn less(a: &Self::Item, b: &Self::Item) -> bool {
-        a < b
+    fn less(&self, i: usize, j: usize) -> bool {
+        self.elements()[i] < self.elements()[j]
     }
 
     fn show(&self) {
@@ -31,9 +31,8 @@ pub trait Sort {
     }
 
     fn is_sorted(&self) -> bool {
-        let a = self.elements();
-        for i in 1..a.len() {
-            if Self::less(&a[i], &a[i - 1]) {
+        for i in 1..self.elements().len() {
+            if self.less(i, i - 1) {
                 return false;
             }
         }

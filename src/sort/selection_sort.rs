@@ -26,20 +26,18 @@ where
     }
 
     fn sort(&mut self) {
-        let data = &mut self.data;
-
-        for i in 0..data.len() {
+        for i in 0..self.elements().len() {
             let mut min = i;
 
             // Find next minimum element in the unsorted part of the array
-            for j in i+1..data.len() {
-                if data[j] < data[min] {
+            for j in i+1..self.elements().len() {
+                if self.less(j, min) {
                     min = j;
                 }
             }
 
             // Data movement is minimal in this alg
-            data.swap(i, min);
+            self.exchange(i, min);
         }
     }
 }
