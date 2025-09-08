@@ -38,6 +38,4 @@ where
 
 // --------------------------------------------------------------------/ tests
 #[cfg(test)]
-use crate::sort::test_macros::generate_sort_tests;
-#[cfg(test)]
-generate_sort_tests!(InsertionSort);
+super::test_macros::generate_sort_tests!(InsertionSort);
