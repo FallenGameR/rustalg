@@ -45,5 +45,5 @@ where
 
 // --------------------------------------------------------------------/ tests
 #[cfg(test)]
-super::test_macros::generate_sort_tests!(SelectionSort);
+super::tests::generate_sort_tests!(SelectionSort);
 

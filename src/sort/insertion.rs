@@ -38,4 +38,4 @@ where
 
 // --------------------------------------------------------------------/ tests
 #[cfg(test)]
-super::test_macros::generate_sort_tests!(InsertionSort);
+super::tests::generate_sort_tests!(InsertionSort);

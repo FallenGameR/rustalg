@@ -1,13 +1,13 @@
 //------------------------------------------------------/ Submodules
-pub mod selection_sort;
-pub mod insertion_sort;
+pub mod selection;
+pub mod insertion;
 
 #[cfg(test)]
-mod test_macros;
+mod tests;
 
 //------------------------------------------------------/ Re-exports
-pub use selection_sort::*;
-pub use insertion_sort::*;
+pub use selection::*;
+pub use insertion::*;
 
 //------------------------------------------------------/ Traits
 use std::fmt::Display;
