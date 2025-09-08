@@ -1,4 +1,7 @@
-#[macro_export]
+// Test-only macro (scoped within `crate::sort::test_macros`).
+// Not exported at crate root; import with:
+//   #[cfg(test)] use crate::sort::test_macros::generate_sort_tests;
+// Then invoke: generate_sort_tests!(YourSorterType);
 macro_rules! generate_sort_tests {
     ($sort:ident) => {
         #[cfg(test)]
@@ -32,3 +35,6 @@ macro_rules! generate_sort_tests {
         }
     };
 }
+
+// Re-export macro name to parent module (so `use crate::sort::test_macros::generate_sort_tests;` works)
+pub(crate) use generate_sort_tests;

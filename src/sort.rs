@@ -1,9 +1,15 @@
+//------------------------------------------------------/ Submodules
 pub mod selection_sort;
 pub mod insertion_sort;
 
+#[cfg(test)]
+mod test_macros;
+
+//------------------------------------------------------/ Re-exports
 pub use selection_sort::*;
 pub use insertion_sort::*;
 
+//------------------------------------------------------/ Traits
 use std::fmt::Display;
 
 pub trait Sort {
