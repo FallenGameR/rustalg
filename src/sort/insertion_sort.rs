@@ -1,5 +1,6 @@
 use super::Sort;
 use std::fmt::Display;
+use crate::sort::test_macros::generate_sort_tests;
 
 pub struct InsertionSort<T> {
     data: Vec<T>,
@@ -126,3 +127,5 @@ mod tests {
         assert!(sorter.is_sorted());
     }
 }
+
+generate_sort_tests!(InsertionSort);

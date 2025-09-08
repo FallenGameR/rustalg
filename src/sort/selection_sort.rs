@@ -133,3 +133,4 @@ mod tests {
         assert!(sorter.is_sorted());
     }
 }
+
