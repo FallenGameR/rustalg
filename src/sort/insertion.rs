@@ -5,6 +5,10 @@ pub struct InsertionSort<T> {
     data: Vec<T>,
 }
 
+// Very fast for partly sorted data
+// That would be arrays with few inversions
+// Inversion is any pair of elements that are out of order
+// The number of inversions should be comparable to the array size
 impl<T> InsertionSort<T> {
     pub fn new(data: Vec<T>) -> Self {
         InsertionSort { data }
@@ -31,6 +35,13 @@ where
                 if self.less(j, j - 1) {
                     self.exchange(j, j - 1);
                 }
+                else {
+                    break;
+                }
+
+                // java code for reference:
+                // for (int j = i; j > 0 && less(j, j - 1); j--) {
+                //     exchange(j, j - 1);
             }
         }
     }
