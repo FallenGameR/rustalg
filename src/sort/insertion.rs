@@ -5,10 +5,8 @@ pub struct InsertionSort<T> {
     data: Vec<T>,
 }
 
-// Very fast for partly sorted data
-// That would be arrays with few inversions
+// Very fast for partly sorted data, O(inversions + n)
 // Inversion is any pair of elements that are out of order
-// The number of inversions should be comparable to the array size
 impl<T> InsertionSort<T> {
     pub fn new(data: Vec<T>) -> Self {
         InsertionSort { data }
@@ -42,6 +40,20 @@ where
                 // java code for reference:
                 // for (int j = i; j > 0 && less(j, j - 1); j--) {
                 //     exchange(j, j - 1);
+
+                // less exchanges but requires T: Clone and thus
+                // under the hood drop would be called more often
+                // than necessary; or can be rewriten in unsafe way
+                //
+                // if a[i] < a[i - 1] {
+                //     let key = a[i].clone();              // save
+                //     let mut j = i;
+                //     while j > 0 && a[j - 1] > key {
+                //         a[j] = a[j - 1].clone();         // shift right
+                //         j -= 1;
+                //     }
+                //     a[j] = key;                          // insert
+                // }
             }
         }
     }
