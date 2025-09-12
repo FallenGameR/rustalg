@@ -1,6 +1,7 @@
 use anyhow::{Result, anyhow};
 use std::{fs::File, io::{BufRead, BufReader}};
 
+#[derive(Debug)]
 pub enum Algorithm {
     Selection,
     Insertion,

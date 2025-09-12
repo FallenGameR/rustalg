@@ -14,7 +14,7 @@ use std::{
 };
 
 use rustalg::sort::*;
-use rustalg::args::sort::*;
+use rustalg::sort::args::*;
 
 
 //--------------------------------------------------------------/ functions
