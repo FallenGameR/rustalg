@@ -1,1 +1,1 @@
-pub mod sort;
+pub mod sort_bin;

@@ -2,6 +2,7 @@
 
 use anyhow::{Result, anyhow};
 use clap::{Command, arg};
+
 //use rayon::prelude::*;
 use std::{
     fs::File,
@@ -14,7 +15,7 @@ use std::{
 };
 
 use rustalg::sort::*;
-use rustalg::sort::args::*;
+use rustalg::sort::args::sort_bin::*;
 
 
 //--------------------------------------------------------------/ functions
@@ -36,7 +37,9 @@ fn get_args() -> Result<Config> {
         .about("Sorts a file or input stream")
         .args([
             arg!([INPUT_FILE] "Input file with strings to sort on each line, stdin is -").default_value("-"),
-            arg!(-a --algorithm <ALGORITHM> "Sorting algorithm to use: selection, insertion").default_value("insertion"),
+            arg!(-a --algorithm <ALGORITHM> "Sorting algorithm to use: selection, insertion")
+                .value_parser(clap::builder::EnumValueParser::<Algorithm>::new())
+                .default_value("insertion"),
         ])
         .get_matches();
 
@@ -54,6 +57,8 @@ fn run(config: Config) -> Result<()> {
     let reader = open(&config)?;
 
     println!("Latest alg is to be done, yay!");
+
+    dbg!(config);
 
     Ok(())
 }
