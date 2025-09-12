@@ -1,14 +1,20 @@
 use anyhow::{Result, anyhow};
 use std::{fs::File, io::{BufRead, BufReader}};
 
+pub enum Algorithm {
+    Selection,
+    Insertion,
+}
+
 #[derive(Debug)]
 pub struct Config {
     in_file: String,
+    algorithm: Algorithm,
 }
 
 impl Config {
-    pub fn new(in_file: String) -> Self {
-        Self { in_file }
+    pub fn new(in_file: String, algorithm: Algorithm) -> Self {
+        Self { in_file, algorithm }
     }
 }
 
