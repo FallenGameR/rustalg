@@ -3,7 +3,19 @@
 use anyhow::{Result, anyhow};
 use clap::{Command, arg};
 
-use rustalg::sort::args::sort_bin::*;
+use rustalg::sort::args::{open, sort_bin::*};
+
+#[derive(Debug)]
+pub struct Config {
+    in_file: String,
+    algorithm: Algorithm,
+}
+
+impl Config {
+    pub fn new(in_file: String, algorithm: Algorithm) -> Self {
+        Self { in_file, algorithm }
+    }
+}
 
 
 //--------------------------------------------------------------/ functions
@@ -42,7 +54,7 @@ fn get_args() -> Result<Config> {
 }
 
 fn run(config: Config) -> Result<()> {
-    let reader = open(&config)?;
+    let reader = open(&config.in_file)?;
 
     println!("Latest alg is to be done, yay!");
 
