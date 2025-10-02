@@ -1,8 +1,12 @@
-pub mod sort_bin;
-
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 use anyhow::{Result, anyhow};
+
+#[derive(Debug, Clone, clap::ValueEnum)]
+pub enum Algorithm {
+    Selection,
+    Insertion,
+}
 
 pub fn open(path: &str) -> Result<Box<dyn BufRead>> {
     match path {

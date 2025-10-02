@@ -3,13 +3,13 @@
 use anyhow::Result;
 use clap::Parser;
 
-use rustalg::sort::args::{open, sort_bin::Algorithm};
+use rustalg::sort::args::{open, Algorithm};
 
 /// Sorts a file or input stream with various different algorithms
 #[derive(Parser, Debug)]
-#[command(name = "sort", version, about = "Sort utility")]
+#[command(version)]
 pub struct Config {
-    /// Input file with strings to sort on each line; use - for stdin
+    /// Input file to sort with sorted strings on each line; use - for stdin
     #[arg(value_name="INPUT", default_value="-")]
     in_file: String,
 
@@ -33,7 +33,18 @@ fn main() {
 }
 
 fn run(config: Config) -> Result<()> {
-    let _reader = open(&config.in_file)?;
+    let reader = open(&config.in_file)?;
+    let mut lines = Vec::new();
+    for line in reader.lines() {
+        lines.push(line?);
+    }
+
     println!("Algorithm: {:?}", config.algorithm);
+    match config.algorithm {
+        Algorithm::Selection => todo!(),
+        Algorithm::Insertion => todo!(),
+    }
+
+
     Ok(())
-}
+};
