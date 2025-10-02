@@ -1,4 +1,5 @@
-// page 245
+
+/*// page 245
 
 use anyhow::{Result, anyhow};
 use clap::{Command, arg};
@@ -13,15 +14,15 @@ use std::{
     usize,
 };
 
-use rustalg::args::*;
+use rustalg::sort::args::{sort_bin::Config};
 use rustalg::sort::*;
 
 
 //--------------------------------------------------------------/ functions
 // $env:RUSTFLAGS="-Awarnings"
-// cargo run --release --bin union-find -- .\data\union-find\tinyUF.txt
-// hyperfine.exe --warmup 1 ".\target\release\union-find.exe .\data\union-find\largeUF.txt" # 338ms for WeightedUnionFind
-// hyperfine.exe --warmup 1 ".\target\release\union-find.exe .\data\union-find\largeUF.txt" # 328ms for WeightedUnionFindWithPathCompression (incremental)
+// cargo run --release --bin sort-compare # -- .\data\union-find\tinyUF.txt
+// hyperfine.exe --warmup 1 ".\target\release\sort-compare.exe .\data\union-find\largeUF.txt" # 338ms for WeightedUnionFind
+// hyperfine.exe --warmup 1 ".\target\release\sort-compare.exe .\data\union-find\largeUF.txt" # 328ms for WeightedUnionFindWithPathCompression (incremental)
 fn main() {
     if let Err(error) = get_args().and_then(run) {
         eprintln!("{error}");
@@ -53,3 +54,4 @@ fn run(config: Config) -> Result<()> {
 
     Ok(())
 }
+*/

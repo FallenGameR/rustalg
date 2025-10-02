@@ -3,18 +3,6 @@
 use anyhow::{Result, anyhow};
 use clap::{Command, arg};
 
-//use rayon::prelude::*;
-use std::{
-    fs::File,
-    io::{BufRead, BufReader},
-    //    sync::{
-    //        Arc,
-    //        atomic::{AtomicU32, Ordering},
-    //    },
-    usize,
-};
-
-use rustalg::sort::*;
 use rustalg::sort::args::sort_bin::*;
 
 
