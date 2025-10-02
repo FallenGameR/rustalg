@@ -1,13 +1,18 @@
 // page 245
 
 use anyhow::{Result, anyhow};
-use clap::{Command, arg};
+use clap::{arg, Command, Parser};
 
 use rustalg::sort::args::{open, sort_bin::*};
 
-#[derive(Debug)]
+/// Sorts a file or input stream with various different algorithms
+#[derive(Parser, Debug)]
+#[command(name = "sort", version, about = "Sort utility")]
 pub struct Config {
+    /// Input file with strings to sort on each line, stdin is - to the (positional parameter), this comment is added to help
+    #[arg(default_value = "-")]
     in_file: String,
+
     algorithm: Algorithm,
 }
 
@@ -31,6 +36,12 @@ fn main() {
 }
 
 fn get_args() -> Result<Config> {
+    let cli = Config::parse();
+    if cli.command.is_none() {
+        return Ok(());
+    }
+
+    let in_file = cli.input_file;
     let mut matches = Command::new("sorting")
         .version("1.0")
         .author("FallenGameR")
