@@ -3,7 +3,7 @@
 use anyhow::Result;
 use clap::Parser;
 use rand::Rng;
-use rustalg::sort::{args::Algorithm, insertion::InsertionSort, selection::SelectionSort, Sort, Sorter};
+use rustalg::sort::{args::Algorithm, Sort, Sorter};
 
 /// Compare two sort alg implementations runtime-wise
 #[derive(Parser, Debug)]
@@ -18,7 +18,7 @@ pub struct Config {
     second: Algorithm,
 
     /// Length of a random array of doubles to sort
-    #[arg(short='l', long="length", default_value_t=1_000)]
+    #[arg(short='l', long="length", default_value_t=10_000)]
     array_length: usize,
 
     /// Number of trials to run
@@ -40,19 +40,25 @@ fn main() {
 }
 
 fn run(config: Config) -> Result<()> {
-
     let mut rng = rand::rng();
+    let mut time_first = std::time::Duration::ZERO;
+    let mut time_second = std::time::Duration::ZERO;
 
     for trial in 0..config.trials {
-        println!("Trial {}/{}: array length {}", trial + 1, config.trials, config.array_length);
+        println!("Trial {}/{}", trial + 1, config.trials);
         let data: Vec<f64> = (0..config.array_length).map(|_| rng.random()).collect();
 
         let duration_first = measure_sort(&config.first, data.clone());
         println!("  {:?}: {:?}", config.first, duration_first);
+        time_first += duration_first;
 
         let duration_second = measure_sort(&config.second, data.clone());
         println!("  {:?}: {:?}", config.second, duration_second);
+        time_second += duration_second;
     }
+
+    let ratio = time_second.as_secs_f64() / time_first.as_secs_f64();
+    println!("Alg {:?} is {:.2}x faster than {:?} on array length {}", config.first, ratio, config.second, config.array_length);
 
     Ok(())
 }
