@@ -1,10 +1,7 @@
 // page 245
 
-use std::io::BufRead;
-
 use anyhow::Result;
 use clap::Parser;
-
 use rustalg::sort::{args::{open, Algorithm}, insertion::InsertionSort, selection::SelectionSort, Sort};
 
 /// Sorts a file or input stream with various different algorithms
@@ -38,7 +35,7 @@ fn run(config: Config) -> Result<()> {
     println!("Reading input file: {:?}", config.in_file);
     let reader = open(&config.in_file)?;
     let mut lines = Vec::new();
-    for line in reader.lines() {
+    for line in std::io::BufRead::lines(reader) {
         lines.push(line?);
     }
     println!("Finished reading, number of lines: {:?}", lines.len());
