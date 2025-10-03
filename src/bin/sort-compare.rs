@@ -2,7 +2,8 @@
 
 use anyhow::Result;
 use clap::Parser;
-use rustalg::sort::{args::{open, Algorithm}, insertion::InsertionSort, selection::SelectionSort, Sort};
+use rand::Rng;
+use rustalg::sort::{args::{Algorithm}, insertion::InsertionSort, selection::SelectionSort, Sort};
 
 /// Compare two sort alg implementations runtime-wise
 #[derive(Parser, Debug)]
@@ -17,7 +18,7 @@ pub struct Config {
     second: Algorithm,
 
     /// Length of a random array of doubles to sort
-    #[arg(short='l', long="length", default_value_t=1_000_000)]
+    #[arg(short='l', long="length", default_value_t=1_000)]
     array_length: usize,
 
     /// Number of trials to run
@@ -39,21 +40,38 @@ fn main() {
 }
 
 fn run(config: Config) -> Result<()> {
-    /*
-    println!("Finished reading, number of lines: {:?}", lines.len());
 
-    println!("Init algorithm: {:?}", config.first);
-    let mut sorter: Box<dyn Sort<Item = String>> = match config.first {
-        Algorithm::Selection => Box::new(SelectionSort::new(lines)),
-        Algorithm::Insertion => Box::new(InsertionSort::new(lines)),
-    };
+    let mut rng = rand::rng();
 
-    sorter.sort();
-    println!("Finished sorting");
+    for trial in 0..config.trials {
+        println!("Trial {}/{}: array length {}", trial + 1, config.trials, config.array_length);
+        let data: Vec<f64> = (0..config.array_length).map(|_| rng.random()).collect();
 
-    sorter.is_sorted();
-    println!("All is sorted");
-    */
+        let duration_first = measure_sort(&config.first, data.clone());
+        println!("  {:?}: {:?}", config.first, duration_first);
+
+        let duration_second = measure_sort(&config.second, data.clone());
+        println!("  {:?}: {:?}", config.second, duration_second);
+    }
 
     Ok(())
+}
+
+fn construct_alg(alg: &Algorithm, data: Vec<f64>) -> Box<dyn Sort<Item = f64>> {
+    match alg {
+        Algorithm::Selection => Box::new(SelectionSort::new(data)),
+        Algorithm::Insertion => Box::new(InsertionSort::new(data)),
+    }
+}
+
+
+fn measure_sort(alg: &Algorithm, data: Vec<f64>) -> std::time::Duration {
+    let mut sorter = construct_alg(alg, data.clone());
+
+    let start = std::time::Instant::now();
+    sorter.sort();
+    let duration = start.elapsed();
+
+    sorter.is_sorted();
+    duration
 }
