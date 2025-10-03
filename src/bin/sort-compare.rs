@@ -3,7 +3,7 @@
 use anyhow::Result;
 use clap::Parser;
 use rand::Rng;
-use rustalg::sort::{args::{Algorithm}, insertion::InsertionSort, selection::SelectionSort, Sort};
+use rustalg::sort::{args::Algorithm, insertion::InsertionSort, selection::SelectionSort, Sort, Sorter};
 
 /// Compare two sort alg implementations runtime-wise
 #[derive(Parser, Debug)]
@@ -57,16 +57,8 @@ fn run(config: Config) -> Result<()> {
     Ok(())
 }
 
-fn construct_alg(alg: &Algorithm, data: Vec<f64>) -> Box<dyn Sort<Item = f64>> {
-    match alg {
-        Algorithm::Selection => Box::new(SelectionSort::new(data)),
-        Algorithm::Insertion => Box::new(InsertionSort::new(data)),
-    }
-}
-
-
 fn measure_sort(alg: &Algorithm, data: Vec<f64>) -> std::time::Duration {
-    let mut sorter = construct_alg(alg, data.clone());
+    let mut sorter = Sorter::from_algorithm(alg, data);
 
     let start = std::time::Instant::now();
     sorter.sort();
