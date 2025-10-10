@@ -51,15 +51,18 @@ where
             h = 3 * h + 1;
         }
 
-        while (h >= 1) {
-            for (int i = h; i < n; i++) {
-                for (int j = i; j >= h && less(a[j], a[j - h]); j -= h) {
+        while (h >= 1) { // enumerates the h sequence
+            for (int i = h; i < n; i++) { // enumerates the slice sequence, why not start from 0?
+                for (int j = i; j >= h && less(a[j], a[j - h]); j -= h) { // insertion sort in current slice
                     exchange(a, j, j - h);
                 }
             }
             h = h / 3;
         }
 
+        // insertion sort
+        // for (int j = i; j > 0 && less(j, j - 1); j--) {
+        //     exchange(j, j - 1);
 
         n = 16
 
