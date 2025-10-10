@@ -30,12 +30,11 @@ where
     fn sort(&mut self) {
         for i in 1..self.elements().len() {
             for j in (1..=i).rev() {
-                if self.less(j, j - 1) {
-                    self.exchange(j, j - 1);
-                }
-                else {
+                if !self.less(j, j - 1) {
                     break;
                 }
+
+                self.exchange(j, j - 1);
 
                 // java code for reference:
                 // for (int j = i; j > 0 && less(j, j - 1); j--) {
