@@ -2,7 +2,13 @@
 
 use anyhow::Result;
 use clap::Parser;
-use rustalg::sort::{args::{open, Algorithm}, insertion::InsertionSort, selection::SelectionSort, Sort};
+use rustalg::sort::{
+    args::{open, Algorithm},
+    insertion::InsertionSort,
+    selection::SelectionSort,
+    shell::ShellSort,
+    Sort
+};
 
 /// Sorts a file or input stream with various different algorithms
 #[derive(Parser, Debug)]
@@ -44,6 +50,7 @@ fn run(config: Config) -> Result<()> {
     let mut sorter: Box<dyn Sort<Item = String>> = match config.algorithm {
         Algorithm::Selection => Box::new(SelectionSort::new(lines)),
         Algorithm::Insertion => Box::new(InsertionSort::new(lines)),
+        Algorithm::Shell => Box::new(ShellSort::new(lines)),
     };
 
     sorter.sort();

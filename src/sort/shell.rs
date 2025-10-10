@@ -28,13 +28,25 @@ where
     }
 
     fn sort(&mut self) {
-        for i in 1..self.elements().len() {
-            for j in (1..=i).rev() {
-                if !self.less(j, j - 1) {
-                    break;
-                }
+        // Build h sequence, this one is ok in practice:  1, 4, 13, 40, 121, 364, 1093, ...
+        let mut h = Vec::new();
+        let mut k = 1;
+        while k < self.elements().len() / 3 {
+            h.push(k);
+            k = 3 * k + 1;
+        }
 
-                self.exchange(j, j - 1);
+        // Sort with decreasing h
+        while let Some(gap) = h.pop() {
+            // Insertion sort with gap
+            for i in gap..self.elements().len() {
+                for j in (gap..=i).rev().step_by(gap) {
+                    if !self.less(j, j - gap) {
+                        break;
+                    }
+
+                    self.exchange(j, j - gap);
+                }
             }
         }
     }
@@ -59,39 +71,7 @@ where
             }
             h = h / 3;
         }
-
-        // insertion sort
-        // for (int j = i; j > 0 && less(j, j - 1); j--) {
-        //     exchange(j, j - 1);
-
-        n = 16
-
-        h = 13
-        i = 13 14 15
-        j = 13
-
-        h = 4
-        i = 4 5 6 7 8 9 10 11 12 13 14 15
-        j = rev i..4
-
-        h =  1
-        i = 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
-        j = rev i..1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+     }
      */
 }
 
