@@ -29,12 +29,9 @@ where
 
     fn sort(&mut self) {
         // Build h sequence, this one is ok in practice:  1, 4, 13, 40, 121, 364, 1093, ...
-        let mut h = Vec::new();
-        let mut k = 1;
-        while k < self.elements().len() / 3 {
-            h.push(k);
-            k = 3 * k + 1;
-        }
+        let mut h: Vec<_> = std::iter::successors(Some(1), |&k| Some(3 * k + 1))
+            .take_while(|&k| k <= self.elements().len() / 3 || k == 1)
+            .collect();
 
         // Sort with decreasing h
         while let Some(gap) = h.pop() {

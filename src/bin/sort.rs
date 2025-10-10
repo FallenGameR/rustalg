@@ -27,8 +27,10 @@ pub struct Config {
 //--------------------------------------------------------------/ functions
 // $env:RUSTFLAGS="-Awarnings"
 // cargo run --release --bin sort -- -a selection .\data\rand\2K_int.txt
-// hyperfine.exe --warmup 1 ".\target\release\sort.exe -a selection .\data\rand\32K_int.txt" # 2.4s
-// hyperfine.exe --warmup 1 ".\target\release\sort.exe -a insertion .\data\rand\2K_int.txt"  # 1.0 sec
+// hyperfine.exe --warmup 1 ".\target\release\sort.exe -a selection .\data\rand\32K_int.txt"  # 2.4   s
+// hyperfine.exe --warmup 1 ".\target\release\sort.exe -a insertion .\data\rand\32K_int.txt"  # 1.0   s
+// hyperfine.exe --warmup 1 ".\target\release\sort.exe -a shell .\data\rand\32K_int.txt"      # 0.026 s
+
 fn main() {
     let config = Config::parse();
     if let Err(error) = run(config) {
