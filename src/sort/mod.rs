@@ -2,6 +2,7 @@
 pub mod args;
 pub mod selection;
 pub mod insertion;
+pub mod shell;
 
 #[cfg(test)]
 mod tests;
@@ -10,7 +11,8 @@ mod tests;
 use std::fmt::Display;
 use crate::sort::{
     insertion::InsertionSort,
-    selection::SelectionSort
+    selection::SelectionSort,
+    shell::ShellSort
 };
 
 //------------------------------------------------------/ Traits
@@ -52,6 +54,7 @@ pub trait Sort {
 pub enum Sorter<T> {
     Selection(SelectionSort<T>),
     Insertion(InsertionSort<T>),
+    Shell(ShellSort<T>),
 }
 
 impl<T> Sorter<T> {
@@ -59,6 +62,7 @@ impl<T> Sorter<T> {
         match self {
             Self::Selection(_) => "selection",
             Self::Insertion(_) => "insertion",
+            Self::Shell(_) => "shell",
         }
     }
 
@@ -66,6 +70,7 @@ impl<T> Sorter<T> {
         match alg {
             args::Algorithm::Selection => Self::selection(data),
             args::Algorithm::Insertion => Self::insertion(data),
+            args::Algorithm::Shell => Self::shell(data),
         }
     }
 
@@ -75,6 +80,10 @@ impl<T> Sorter<T> {
 
     pub fn insertion(data: Vec<T>) -> Self {
         Self::Insertion(InsertionSort::new(data))
+    }
+
+    pub fn shell(data: Vec<T>) -> Self {
+        Self::Shell(ShellSort::new(data))
     }
 }
 
@@ -88,6 +97,7 @@ where
         match self {
             Self::Selection(s) => s.elements(),
             Self::Insertion(s) => s.elements(),
+            Self::Shell(s) => s.elements(),
         }
     }
 
@@ -95,6 +105,7 @@ where
         match self {
             Self::Selection(s) => s.elements_mut(),
             Self::Insertion(s) => s.elements_mut(),
+            Self::Shell(s) => s.elements_mut(),
         }
     }
 
@@ -102,6 +113,7 @@ where
         match self {
             Self::Selection(s) => s.sort(),
             Self::Insertion(s) => s.sort(),
+            Self::Shell(s) => s.sort(),
         }
     }
 }

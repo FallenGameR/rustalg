@@ -6,6 +6,7 @@ use anyhow::{Result, anyhow};
 pub enum Algorithm {
     Selection,
     Insertion,
+    Shell,
 }
 
 pub fn open(path: &str) -> Result<Box<dyn BufRead>> {
